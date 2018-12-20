@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	dbCfg := config.LoadConfig()
+	dbCfg := config.GetDBConfig()
 	mysql := &mysql{}
 	regist(mysql)
 	createConnection(dbCfg)

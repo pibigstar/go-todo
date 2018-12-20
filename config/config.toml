@@ -8,6 +8,7 @@
     [db.redis]
     host="127.0.0.1"
     port=6379
-[common]
-appId="wx8b3637af0295daed"
+[server]
+port=7410
+appid="wx8b3637af0295daed"
 secret="4be82d4abae4522e8ef1990e91a67a20"
