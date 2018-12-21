@@ -1,24 +1,18 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gitee.com/johng/gf/g"
 	"github.com/pibigstar/go-todo/config"
-	"github.com/pibigstar/go-todo/router"
+	_ "github.com/pibigstar/go-todo/controller"
 	"github.com/pibigstar/go-todo/utils/logger"
 )
 
 var log = logger.New("main")
 
 func main() {
-
+	s := g.Server()
 	port := config.ServerConfig.Port
 
-	app := gin.New()
-
-	router.Route(app)
-
-	app.Run(":" + fmt.Sprintf("%d", port))
+	s.SetPort(int(port))
+	s.Run()
 }

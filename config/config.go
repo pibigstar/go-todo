@@ -10,9 +10,10 @@ var log = logger.New("config")
 var ServerConfig serverConfig
 
 type serverConfig struct {
-	Port   int64
-	Appid  string
-	Secret string
+	Port       int64
+	Appid      string
+	Secret     string
+	WxLoginUrl string
 }
 
 // LoadConfig 加载配置文件
@@ -41,9 +42,10 @@ func buildServerConfig() {
 	cfg := GetServerConfig()
 	port := cfg["port"].(int64)
 	ServerConfig = serverConfig{
-		Port:   port,
-		Appid:  cfg["appid"].(string),
-		Secret: cfg["secret"].(string),
+		Port:       port,
+		Appid:      cfg["appid"].(string),
+		Secret:     cfg["secret"].(string),
+		WxLoginUrl: cfg["wxloginurl"].(string),
 	}
 }
 
