@@ -6,7 +6,10 @@
 
 后端采用go语言进行编写
 
-- gin框架
+- goframe框架
 - 数据库端使用gorm框架
+- redis缓存
+- jwt加密
+
 
 
