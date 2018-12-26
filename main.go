@@ -22,4 +22,5 @@ func main() {
 	s.SetErrorLogEnabled(true)
 
 	s.Run()
+
 }
