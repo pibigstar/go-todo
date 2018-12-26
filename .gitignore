@@ -1,3 +1,4 @@
 *.log
 .idea
 *.swp
+conf/config-prod.toml

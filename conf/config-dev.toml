@@ -9,8 +9,9 @@
     host="127.0.0.1"
     port=6379
 [server]
+host="127.0.0.1"
 port=7410
 wxloginurl="https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
-appid="wx8b3637af0295daed"
-secret="4be82d4abae4522e8ef1990e91a67a20"
-groupcodesecret="&&jsdfjsdlkf**jklaqw%dsf##sdf"
+appid=""
+secret=""
+groupcodesecret=""

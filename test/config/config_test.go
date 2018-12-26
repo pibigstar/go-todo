@@ -1,12 +1,12 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pibigstar/go-todo/config"
 )
 
 func TestConfig(t *testing.T) {
-	mysqlCfg := config.LoadConfig()
-	log.Info("db config", db)
+	fmt.Printf("%+v", config.ServerConfig)
 }

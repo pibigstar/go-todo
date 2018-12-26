@@ -10,6 +10,7 @@ import (
 
 	"gitee.com/johng/gf/g"
 	"gitee.com/johng/gf/g/net/ghttp"
+	"gitee.com/johng/gf/g/util/gvalid"
 )
 
 func init() {
@@ -19,7 +20,7 @@ func init() {
 
 // WxLoginRequest 微信登录request
 type WxLoginRequest struct {
-	Code string `json:"code" binding:"required"`
+	Code string `json:"code" gvalid:"type@required#code码不能为空"`
 }
 
 // WxLoginResponse 微信登录response
@@ -37,10 +38,16 @@ func wxLogin(r *ghttp.Request) {
 	wxLoginRequest := new(WxLoginRequest)
 	r.GetToStruct(wxLoginRequest)
 
+	if err := gvalid.CheckStruct(wxLoginRequest, nil); err != nil {
+		log.Error("code为空", "err", err.String())
+		r.Response.WriteJson(errorResponse(err.String()))
+		return
+	}
+
 	var wxLoginResp WxLoginResponse
 	// 拿到session_key 和 openid
 	client := &http.Client{}
-	url := fmt.Sprintf(config.ServerConfig.WxLoginUrl, config.ServerConfig.Appid, config.ServerConfig.Secret, wxLoginRequest.Code)
+	url := fmt.Sprintf(config.ServerConfig.WxLoginURL, config.ServerConfig.Appid, config.ServerConfig.Secret, wxLoginRequest.Code)
 	res, err := client.Get(url)
 	if err != nil {
 		log.Error("获取openId失败", "err", err.Error())
@@ -49,6 +56,5 @@ func wxLogin(r *ghttp.Request) {
 	body, _ := ioutil.ReadAll(res.Body)
 	json.Unmarshal(body, &wxLoginResp)
 
-	fmt.Printf("%+v\n", wxLoginResp)
 	r.Response.WriteJson(wxLoginResp)
 }

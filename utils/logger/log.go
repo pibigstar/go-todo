@@ -92,6 +92,8 @@ func newLogger() *zap.Logger {
 	config.EncoderConfig = buildLogConfig(config.EncoderConfig)
 	config.OutputPaths = []string{"stdout"}
 	config.ErrorOutputPaths = []string{"stdout"}
+	// 不打印堆栈信息
+	config.DisableStacktrace = true
 
 	log, _ := config.Build()
 
@@ -104,7 +106,7 @@ func buildLogConfig(config zapcore.EncoderConfig) zapcore.EncoderConfig {
 	config.TimeKey = "time"
 	config.LevelKey = "level"
 	config.CallerKey = "caller"
-	config.StacktraceKey = "backtrace"
+	// config.StacktraceKey = "backtrace"
 	config.EncodeLevel = zapcore.LowercaseLevelEncoder
 	config.EncodeTime = zapcore.ISO8601TimeEncoder
 	config.LineEnding = zapcore.DefaultLineEnding

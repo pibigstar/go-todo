@@ -12,7 +12,14 @@ var log = logger.New("main")
 func main() {
 	s := g.Server()
 	port := config.ServerConfig.Port
-
 	s.SetPort(int(port))
+	host := config.ServerConfig.Host
+	s.Domain(host)
+
+	// 开启日志
+	s.SetLogPath("log/todo.log")
+	s.SetAccessLogEnabled(true)
+	s.SetErrorLogEnabled(true)
+
 	s.Run()
 }
