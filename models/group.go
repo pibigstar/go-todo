@@ -20,6 +20,9 @@ type Group struct {
 	CreateTime    time.Time `gorm:"column:create_time"`
 	UpdateTime    time.Time `gorm:"column:update_time"`
 	IsDelete      bool      `gorm:"column:is_delete"`
+	JoinMethod    string    `gorm:"column:join_method"`
+	Question      string    `gorm:"column:question"`
+	Answer        string    `gorm:"column:answer"`
 }
 
 // TableName 组织表

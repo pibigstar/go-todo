@@ -3,6 +3,8 @@ package controller
 import (
 	"time"
 
+	"github.com/pibigstar/go-todo/middleware"
+
 	"gitee.com/johng/gf/g"
 	"gitee.com/johng/gf/g/net/ghttp"
 	"github.com/pibigstar/go-todo/models"
@@ -18,10 +20,13 @@ func init() {
 
 // CreateGroupRequest 创建组织请求体
 type CreateGroupRequest struct {
-	GroupName     string `json:"group_name"`
-	GroupDescribe string `json:"group_describe"`
-	GroupMaster   string `json:"group_master"`
-	GroupCode     string `json:"group_code"`
+	GroupName     string `json:"groupName"`
+	GroupDescribe string `json:"groupDescribe"`
+	GroupMaster   string `json:"groupMaster"`
+	GroupCode     string `json:"groupCode"`
+	JoinMethod    string `json:"joinMethod"`
+	Questiong     string `json:"question"`
+	Answer        string `json:"answer"`
 }
 
 // JoinGroupRequest 加入组织请求体
@@ -33,13 +38,15 @@ type JoinGroupRequest struct {
 // createGroup 创建组织
 func createGroup(r *ghttp.Request) {
 	createGroupRequest := new(CreateGroupRequest)
-	r.GetPostToStruct(createGroupRequest)
+	r.GetJson().ToStruct(createGroupRequest)
+	// 判断token是否有效
+	middleware.CheckToken(r)
 
 	err := models.MGroup.Create(converCreateGroupToModel(createGroupRequest))
 	if err != nil {
-		r.Response.WriteJson(errorResponse(err.Error()))
+		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
-	r.Response.WriteJson(successResponse("ok"))
+	r.Response.WriteJson(utils.SuccessResponse("ok"))
 
 }
 
@@ -48,33 +55,36 @@ func getGroupsByUserID(r *ghttp.Request) {
 	userID := r.GetInt("userID")
 	groups, err := models.MGroup.GetGroupByID(userID)
 	if err != nil {
-		r.Response.WriteJson(errorResponse(err.Error()))
+		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
-	r.Response.WriteJson(successWithData("ok", groups))
+	r.Response.WriteJson(utils.SuccessWithData("ok", groups))
 }
 
 // joinGroup 加入组织
 func joinGroup(r *ghttp.Request) {
 
 	joinGroupRequest := new(JoinGroupRequest)
-	r.GetPostToStruct(joinGroupRequest)
+	r.GetJson().ToStruct(joinGroupRequest)
 
 	groupUser := converJoinGroupToModel(joinGroupRequest)
 
 	err := models.MGroupUser.Create(groupUser)
 	if err != nil {
-		r.Response.WriteJson(errorResponse(err.Error()))
+		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
-	r.Response.WriteJson(successResponse("ok"))
+	r.Response.WriteJson(utils.SuccessResponse("ok"))
 }
 
 func converCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
-	groupCode := utils.Md5(createGroup.GroupCode)
+	groupCode := utils.GetUUID()
 	return &models.Group{
 		GroupName:     createGroup.GroupName,
 		GroupDescribe: createGroup.GroupDescribe,
 		GroupMaster:   createGroup.GroupMaster,
-		GroupCode:     string(groupCode),
+		JoinMethod:    createGroup.JoinMethod,
+		Question:      createGroup.Questiong,
+		Answer:        createGroup.Answer,
+		GroupCode:     groupCode,
 		IsDelete:      false,
 		CreateTime:    time.Now(),
 		UpdateTime:    time.Now(),

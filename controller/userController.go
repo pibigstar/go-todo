@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/pibigstar/go-todo/utils"
+
 	"github.com/pibigstar/go-todo/config"
 
 	"gitee.com/johng/gf/g"
@@ -30,20 +32,20 @@ type WxLoginResponse struct {
 	Unionid    string `json:"unionid"`
 	Errcode    int    `json:"errcode"`
 	ErrMsg     string `json:"errMsg"`
+	Token      string `json:"token"`
 }
 
 // WxLogin 微信登录
 func wxLogin(r *ghttp.Request) {
 
 	wxLoginRequest := new(WxLoginRequest)
-	r.GetToStruct(wxLoginRequest)
+	r.GetJson().ToStruct(wxLoginRequest)
 
 	if err := gvalid.CheckStruct(wxLoginRequest, nil); err != nil {
 		log.Error("code为空", "err", err.String())
-		r.Response.WriteJson(errorResponse(err.String()))
+		r.Response.WriteJson(utils.ErrorResponse(err.String()))
 		return
 	}
-
 	var wxLoginResp WxLoginResponse
 	// 拿到session_key 和 openid
 	client := &http.Client{}
@@ -55,6 +57,10 @@ func wxLogin(r *ghttp.Request) {
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 	json.Unmarshal(body, &wxLoginResp)
-
+	token, err := utils.GenOpenIDToken(wxLoginResp.Openid)
+	if err != nil {
+		log.Error("生成token失败", "err", err.Error())
+	}
+	wxLoginResp.Token = token
 	r.Response.WriteJson(wxLoginResp)
 }

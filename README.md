@@ -54,7 +54,7 @@ s.Run()
 
 ```
 
-### 3.2 配置文件读取
+### 2.2 配置文件读取
 使用`viper`框架 
 
 安装:
@@ -74,7 +74,7 @@ viper.ReadInConfig()
 viper.GetStringMap("server")
 ```
 
-### 3.3 日志输出
+### 2.3 日志输出
 使用`zap`框架
 
 安装：
@@ -84,7 +84,7 @@ go get -u go.uber.org/zap
 使用：见`utils/log/log.go`
 
 
-### 3.4 定时任务
+### 2.4 定时任务
 使用`cron`框架
 
 安装:

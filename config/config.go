@@ -29,6 +29,7 @@ type serverConfig struct {
 	Secret          string
 	WxLoginURL      string
 	GroupCodeSecret string
+	SecretKey       string
 }
 
 type serverStartupFlags struct {
@@ -44,7 +45,8 @@ func LoadConfig() {
 	viper.SetConfigName(configName)
 	// 设置配置文件路径
 	viper.AddConfigPath("conf")
-
+	// 测试时使用路径
+	viper.AddConfigPath("../../conf")
 	// 解析配置
 	viper.ReadInConfig()
 }
@@ -68,6 +70,7 @@ func buildServerConfig() {
 		Secret:          cfg["secret"].(string),
 		WxLoginURL:      cfg["wxloginurl"].(string),
 		GroupCodeSecret: cfg["groupcodesecret"].(string),
+		SecretKey:       cfg["secretkey"].(string),
 	}
 	ServerConfig.Port = int64(ServerStartupFlags.Port)
 	ServerConfig.Host = ServerStartupFlags.Host

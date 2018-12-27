@@ -1,4 +1,4 @@
-package controller
+package utils
 
 // Response 封装请求返回体
 type Response struct {
@@ -8,16 +8,16 @@ type Response struct {
 }
 
 // ErrorReponse 错误返回体
-func errorResponse(msg string) *Response {
+func ErrorResponse(msg string) *Response {
 	return &Response{Code: 500, Msg: msg}
 }
 
 // SuccessReponse 成功返回体
-func successResponse(msg string) *Response {
+func SuccessResponse(msg string) *Response {
 	return &Response{Code: 200, Msg: msg}
 }
 
 // successWithData 成功返回体
-func successWithData(msg string, data interface{}) *Response {
+func SuccessWithData(msg string, data interface{}) *Response {
 	return &Response{Code: 200, Msg: msg, Data: data}
 }
