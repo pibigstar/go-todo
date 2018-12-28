@@ -9,8 +9,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-//  使用jwt 生成token 与使用
-
 var (
 	// 加密的key值
 	secretKey = config.ServerConfig.SecretKey
@@ -63,15 +61,14 @@ func CheckJwtTokenExpected(tokenString string) error {
 
 // ParseJwtToken 解析token
 func ParseJwtToken(tokenString string) (*jwt.Token, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			return nil, errors.New("unexpected token claims")
 		}
 		return []byte(secretKey), nil
 	})
-
-	return token, err
+	return token, nil
 }
 
 // GetOpenIDFromToken 从token中拿到openid

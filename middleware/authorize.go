@@ -19,8 +19,8 @@ func GetOpenID(r *ghttp.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	validata := utils.CheckJwtToken(token)
-	if !validata {
+	validate := utils.CheckJwtToken(todoToken)
+	if !validate {
 		return "", errors.New("token已过期")
 	}
 	return token, nil

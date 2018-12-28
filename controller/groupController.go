@@ -41,8 +41,10 @@ func createGroup(r *ghttp.Request) {
 	r.GetJson().ToStruct(createGroupRequest)
 	// 判断token是否有效
 	middleware.CheckToken(r)
-
-	err := models.MGroup.Create(converCreateGroupToModel(createGroupRequest))
+	mCreateGroup := convertCreateGroupToModel(createGroupRequest)
+	openID, err := middleware.GetOpenID(r)
+	mCreateGroup.GroupMaster = openID
+	err = models.MGroup.Create(mCreateGroup)
 	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
@@ -66,7 +68,7 @@ func joinGroup(r *ghttp.Request) {
 	joinGroupRequest := new(JoinGroupRequest)
 	r.GetJson().ToStruct(joinGroupRequest)
 
-	groupUser := converJoinGroupToModel(joinGroupRequest)
+	groupUser := convertJoinGroupToModel(joinGroupRequest)
 
 	err := models.MGroupUser.Create(groupUser)
 	if err != nil {
@@ -75,12 +77,11 @@ func joinGroup(r *ghttp.Request) {
 	r.Response.WriteJson(utils.SuccessResponse("ok"))
 }
 
-func converCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
+func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
 	groupCode := utils.GetUUID()
 	return &models.Group{
 		GroupName:     createGroup.GroupName,
 		GroupDescribe: createGroup.GroupDescribe,
-		GroupMaster:   createGroup.GroupMaster,
 		JoinMethod:    createGroup.JoinMethod,
 		Question:      createGroup.Questiong,
 		Answer:        createGroup.Answer,
@@ -91,7 +92,7 @@ func converCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
 	}
 }
 
-func converJoinGroupToModel(request *JoinGroupRequest) *models.GroupUser {
+func convertJoinGroupToModel(request *JoinGroupRequest) *models.GroupUser {
 	return &models.GroupUser{
 		GroupID:    request.GroupID,
 		UserID:     request.UserID,

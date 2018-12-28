@@ -10,6 +10,11 @@ import (
 // Mysql 供外部调用
 var Mysql *myDB
 
+// myDB 封装一些数据库常用的操作
+type myDB struct {
+	*gorm.DB
+}
+
 type mysql struct {
 	db *myDB //为了实现关闭数据库，所以在内部持有一个DB对象
 }
@@ -38,4 +43,12 @@ func (m *mysql) Init(conf map[string]interface{}) error {
 
 func (m *mysql) Close() {
 	m.db.Close()
+}
+
+func (db *myDB) Create(value interface{}) error {
+	return db.Model(value).Create(value).Error
+}
+
+func (db *myDB) FindOne(result interface{}, where ...interface{}) error {
+	return db.First(result, where...).Error
 }
