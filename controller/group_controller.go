@@ -25,7 +25,7 @@ type CreateGroupRequest struct {
 	GroupMaster   string `json:"groupMaster"`
 	GroupCode     string `json:"groupCode"`
 	JoinMethod    string `json:"joinMethod"`
-	Questiong     string `json:"question"`
+	Question      string `json:"question"`
 	Answer        string `json:"answer"`
 }
 
@@ -83,7 +83,7 @@ func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
 		GroupName:     createGroup.GroupName,
 		GroupDescribe: createGroup.GroupDescribe,
 		JoinMethod:    createGroup.JoinMethod,
-		Question:      createGroup.Questiong,
+		Question:      createGroup.Question,
 		Answer:        createGroup.Answer,
 		GroupCode:     groupCode,
 		IsDelete:      false,

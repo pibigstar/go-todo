@@ -31,6 +31,17 @@ func GenOpenIDToken(openID string) (string, error) {
 	return token.SignedString([]byte(secretKey))
 }
 
+// GenSecretToken 根据secret生成token
+func GenSecretToken(secret string) (string, error) {
+	claims := make(jwt.MapClaims)
+	// 有效期
+	claims[TokenClaimEXP] = time.Now().Add(time.Hour * time.Duration(TermOfValidity)).Unix()
+	claims[TokenClaimOpenID] = secret
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	return token.SignedString([]byte(secretKey))
+}
+
 // GenJwtToken 生成token
 func GenJwtToken(claims jwt.MapClaims) (string, error) {
 
