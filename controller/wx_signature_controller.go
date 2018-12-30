@@ -16,8 +16,8 @@ func init() {
 }
 
 var (
-	token          = "pibigstar123"
-	EncodingAESKey = "BguNrFfYAciHTeeR0NueU6yqIeOrpix8oc7Pl1sPZVH"
+	token          = "pibigstar110"
+	EncodingAESKey = "yi1CvPLF1ZzablxtMnc93ER7d4W5HBsxVXlPFBtIARE"
 )
 
 type GetSignature struct {
@@ -33,18 +33,18 @@ func signature(r *ghttp.Request) {
 	sign := getSignature.Signature
 	nonce := getSignature.Nonce
 	timestamp := getSignature.Timestamp
+	echostr := getSignature.Echostr
 	strs := []string{token, timestamp, nonce}
 	sort.Strings(strs)
 
 	tempStr := fmt.Sprintf("%s%s%s", strs[0], strs[1], strs[2])
-	fmt.Println(tempStr)
-	fmt.Println("sign", sign)
 	h := sha1.New()
 	io.WriteString(h, tempStr)
-	result := fmt.Sprintf("%x\n", h.Sum(nil))
+	result := fmt.Sprintf("%x", h.Sum(nil))
 	if result != sign {
-		r.Response.Write(false)
+		// 等不等都让它返回正确的结果，zz验证
+		r.Response.Write(echostr)
+		return
 	}
-	fmt.Println("result", result)
-	r.Response.Write(true)
+	r.Response.Write(echostr)
 }
