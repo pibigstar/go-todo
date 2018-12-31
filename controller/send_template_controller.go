@@ -35,6 +35,5 @@ func sendTemplate(r *ghttp.Request) {
 	if err != nil {
 		fmt.Println("发送模板消息失败", err.Error())
 	}
-	fmt.Println(response)
 	r.Response.WriteJson(response)
 }

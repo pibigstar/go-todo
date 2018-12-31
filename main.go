@@ -22,7 +22,7 @@ func main() {
 	s.SetErrorLogEnabled(true)
 
 	// 开启https
-	s.EnableHTTPS("https/ssl.pem","https/3_pibigstar.com.key")
+	s.EnableHTTPS("https/ssl.pem", "https/3_pibigstar.com.key")
 	s.SetHTTPSPort(7777)
 
 	s.Run()
