@@ -23,7 +23,7 @@ func main() {
 	s.EnableHTTPS("https/ssl.pem", "https/3_pibigstar.com.key")
 	s.SetHTTPSPort(7777)
 	// 开启性能分析，可访问页面/debug/pprof
-	// s.EnablePprof()
+	s.EnablePprof()
 
 	s.Run()
 }
