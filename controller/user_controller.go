@@ -6,13 +6,11 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/pibigstar/go-todo/utils"
-
-	"github.com/pibigstar/go-todo/config"
-
 	"gitee.com/johng/gf/g"
 	"gitee.com/johng/gf/g/net/ghttp"
 	"gitee.com/johng/gf/g/util/gvalid"
+	"github.com/pibigstar/go-todo/config"
+	"github.com/pibigstar/go-todo/utils"
 )
 
 func init() {

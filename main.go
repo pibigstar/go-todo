@@ -15,16 +15,15 @@ func main() {
 	s.SetPort(int(port))
 	host := config.ServerConfig.Host
 	s.Domain(host)
-
 	// 开启日志
 	s.SetLogPath("log/todo.log")
 	s.SetAccessLogEnabled(true)
 	s.SetErrorLogEnabled(true)
-
 	// 开启https
 	s.EnableHTTPS("https/ssl.pem", "https/3_pibigstar.com.key")
 	s.SetHTTPSPort(7777)
+	// 开启性能分析，可访问页面/debug/pprof
+	// s.EnablePprof()
 
 	s.Run()
-
 }

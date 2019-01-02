@@ -18,16 +18,16 @@ func init() {
 }
 
 // IDB 数据库模型层接口
-type IDB interface {
+type iDB interface {
 	Name() string
 	Init(conf map[string]interface{}) error
 	Close()
 }
 
-var dbs []IDB
+var dbs []iDB
 
 // Regist 加入到数组
-func regist(db IDB) {
+func regist(db iDB) {
 	dbs = append(dbs, db)
 }
 
