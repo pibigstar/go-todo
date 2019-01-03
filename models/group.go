@@ -30,9 +30,9 @@ func (Group) TableName() string {
 	return "groups"
 }
 
-// Create 创建
+// Insert 创建
 func (*Group) Create(group *Group) error {
-	return db.Mysql.Create(&group)
+	return db.Mysql.Insert(&group)
 }
 
 // GetGroupByID 根据ID获取组织

@@ -29,7 +29,7 @@ func (User) TableName() string {
 }
 
 func (user *User) Create() error {
-	return db.Mysql.Create(&user)
+	return db.Mysql.Insert(&user)
 }
 
 func (user *User) GetUserByOpenID(openID string) (*User, error) {

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"github.com/pibigstar/go-todo/constant"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -25,9 +27,9 @@ func (*GroupUser) Name() string {
 	return "group_user"
 }
 
-// Create 创建
+// Insert 创建
 func (*GroupUser) Create(groupUser *GroupUser) error {
-	return db.Mysql.Create(groupUser)
+	return db.Mysql.Insert(groupUser)
 }
 
 // GetGroupsByUserOpenID 获取用户加入的群
@@ -43,4 +45,26 @@ func (*GroupUser) GetUserJoinGroups(openID string) (*[]Group, error) {
 		return nil, errors.New("没有找到群")
 	}
 	return &groups, nil
+}
+// GetUserOpenIDs 获取某个群的所有群成员的OpenID
+func (user *GroupUser) GetUserOpenIDs(groupID int) ([]string, error) {
+	var userOpenIds []string
+	err := db.Mysql.Table("group_user").
+		Where("group_id in (?)", groupID).
+		Pluck("user_id", &userOpenIds).Error
+	if err != nil {
+		return nil, err
+	}
+	return userOpenIds, nil
+}
+
+func (*GroupUser) GetFormIds(openIds []string) []string{
+	var formIds []string
+	for _,id := range openIds  {
+		formId, err := db.Redis.Get(fmt.Sprintf(constant.Redis_Prefix_Form_ID, id)).Result()
+		if err == nil {
+			formIds = append(formIds, formId)
+		}
+	}
+	return formIds
 }

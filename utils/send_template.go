@@ -85,14 +85,14 @@ func getAccessToken(openID string) (*GetAccessTokenResponse, error) {
 
 // 从redis中取access_token
 func getAccessTokenFromRedis(openID string) (string, error) {
-	key := fmt.Sprintf(constant.Access_Token_Redis_Prefix, openID)
+	key := fmt.Sprintf(constant.Redis_Prefix_Access_Token, openID)
 	accessToken, err := db.Redis.Get(key).Result()
 	return accessToken, err
 }
 
 // 将access_token存储到redis中
 func setAccessTokenToRedis(openID, token string) (string, error) {
-	key := fmt.Sprintf(constant.Access_Token_Redis_Prefix, openID)
+	key := fmt.Sprintf(constant.Redis_Prefix_Access_Token, openID)
 	b, err := db.Redis.Set(key, token, 7200*time.Second).Result()
 	return b, err
 }

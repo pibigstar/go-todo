@@ -45,7 +45,7 @@ func (m *mysql) Close() {
 	m.db.Close()
 }
 
-func (db *myDB) Create(value interface{}) error {
+func (db *myDB) Insert(value interface{}) error {
 	return db.Model(value).Create(value).Error
 }
 
