@@ -125,9 +125,11 @@ func convertJoinGroupToModel(request *JoinGroupRequest) *models.GroupUser {
 
 func convertModelGroupToResponse(group *models.Group) *SearchGroupResponse {
 	return &SearchGroupResponse{
-		GroupID:    group.ID,
-		JoinMethod: group.JoinMethod,
-		Question:   group.Question,
+		GroupName:     group.GroupName,
+		GroupDescribe: group.GroupDescribe,
+		GroupID:       group.ID,
+		JoinMethod:    group.JoinMethod,
+		Question:      group.Question,
 	}
 }
 
@@ -159,7 +161,9 @@ type GetGroupResponse struct {
 
 // SearchGroupResponse 搜索组织响应体
 type SearchGroupResponse struct {
-	GroupID    int    `json:"groupId"`
-	JoinMethod string `json:"joinMethod"`
-	Question   string `json:"question"`
+	GroupName     string `json:"groupName"`
+	GroupDescribe string `json:"groupDescribe"`
+	GroupID       int    `json:"groupId"`
+	JoinMethod    string `json:"joinMethod"`
+	Question      string `json:"question"`
 }
