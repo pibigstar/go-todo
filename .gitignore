@@ -2,3 +2,7 @@
 .idea
 *.swp
 conf/config-prod.toml
+
+main
+
+
