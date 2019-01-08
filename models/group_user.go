@@ -46,6 +46,7 @@ func (*GroupUser) GetUserJoinGroups(openID string) (*[]Group, error) {
 	}
 	return &groups, nil
 }
+
 // GetUserOpenIDs 获取某个群的所有群成员的OpenID
 func (user *GroupUser) GetUserOpenIDs(groupID int) ([]string, error) {
 	var userOpenIds []string
@@ -58,9 +59,9 @@ func (user *GroupUser) GetUserOpenIDs(groupID int) ([]string, error) {
 	return userOpenIds, nil
 }
 
-func (*GroupUser) GetFormIds(openIds []string) []string{
+func (*GroupUser) GetFormIds(openIds []string) []string {
 	var formIds []string
-	for _,id := range openIds  {
+	for _, id := range openIds {
 		formId, err := db.Redis.Get(fmt.Sprintf(constant.Redis_Prefix_Form_ID, id)).Result()
 		if err == nil {
 			formIds = append(formIds, formId)

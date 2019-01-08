@@ -27,7 +27,7 @@ func (*Task) Name() string {
 	return "task"
 }
 
-func (*Task) Create(task *Task) int{
+func (*Task) Create(task *Task) int {
 	value, _ := db.Mysql.Create(task).Get("id")
 	return cast.ToInt(value)
 }

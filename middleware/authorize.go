@@ -28,6 +28,10 @@ func GetOpenID(r *ghttp.Request) (string, error) {
 
 // CheckToken 检查token是否有效
 func CheckToken(r *ghttp.Request) {
+	// 如果是静态文件则不做token验证
+	if r.IsFileRequest() {
+		return
+	}
 	_, err := GetOpenID(r)
 	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))

@@ -3,10 +3,10 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"go-demo/utils/token"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/pibigstar/go-todo/utils"
 	"google.golang.org/grpc/metadata"
 )
 

@@ -12,7 +12,7 @@ var log = logger.New("main")
 func main() {
 	s := g.Server()
 	port := config.ServerConfig.Port
-	s.SetPort(int(port))
+	s.SetPort(port)
 	host := config.ServerConfig.Host
 	s.Domain(host)
 	// 开启日志
@@ -20,7 +20,7 @@ func main() {
 	s.SetAccessLogEnabled(true)
 	s.SetErrorLogEnabled(true)
 	// 开启https
-	s.EnableHTTPS("https/ssl.pem", "https/3_pibigstar.com.key")
+	s.EnableHTTPS("https/ssl.pem", "https/ssl.key")
 	s.SetHTTPSPort(7777)
 	// 开启性能分析，可访问页面/debug/pprof
 	s.EnablePprof()

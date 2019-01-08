@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"fmt"
+	"github.com/spf13/cast"
 
 	"github.com/pibigstar/go-todo/utils/logger"
 	"github.com/spf13/viper"
@@ -24,7 +25,7 @@ var ServerStartupFlags serverStartupFlags
 
 type serverConfig struct {
 	Host            string
-	Port            int64
+	Port            int
 	Appid           string
 	Secret          string
 	WxLoginURL      string
@@ -65,14 +66,14 @@ func GetServerConfig() map[string]interface{} {
 func buildServerConfig() {
 	cfg := GetServerConfig()
 	ServerConfig = serverConfig{
-		Port:            cfg["port"].(int64),
-		Appid:           cfg["appid"].(string),
-		Secret:          cfg["secret"].(string),
-		WxLoginURL:      cfg["wxloginurl"].(string),
-		GroupCodeSecret: cfg["groupcodesecret"].(string),
-		SecretKey:       cfg["secretkey"].(string),
+		Port:            cast.ToInt(cfg["port"]),
+		Appid:           cast.ToString(cfg["appid"]),
+		Secret:          cast.ToString(cfg["secret"]),
+		WxLoginURL:      cast.ToString(cfg["wxloginurl"]),
+		GroupCodeSecret: cast.ToString(cfg["groupcodesecret"]),
+		SecretKey:       cast.ToString(cfg["secretkey"]),
 	}
-	ServerConfig.Port = int64(ServerStartupFlags.Port)
+	ServerConfig.Port = ServerStartupFlags.Port
 	ServerConfig.Host = ServerStartupFlags.Host
 }
 

@@ -22,8 +22,6 @@ func init() {
 func createGroup(r *ghttp.Request) {
 	createGroupRequest := new(CreateGroupRequest)
 	r.GetJson().ToStruct(createGroupRequest)
-	// 判断token是否有效
-	middleware.CheckToken(r)
 	mCreateGroup := convertCreateGroupToModel(createGroupRequest)
 	openID, err := middleware.GetOpenID(r)
 	mCreateGroup.GroupMaster = openID
@@ -37,7 +35,6 @@ func createGroup(r *ghttp.Request) {
 
 // listGroups 获取用户创建的群
 func listGroups(r *ghttp.Request) {
-	middleware.CheckToken(r)
 	userID, _ := middleware.GetOpenID(r)
 	createGroups, err := models.MGroup.GetUserCreateGroups(userID)
 	if err != nil {

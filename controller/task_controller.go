@@ -23,7 +23,7 @@ type Exerciser struct {
 }
 
 type AppointTo struct {
-	IsAll bool `json:"isAll"`
+	IsAll      bool        `json:"isAll"`
 	Exercisers []Exerciser `json:"exercisers"`
 }
 
@@ -40,7 +40,6 @@ type CreateTaskRequest struct {
 func createTask(r *ghttp.Request) {
 	createTaskRequest := new(CreateTaskRequest)
 	r.GetJson().ToStruct(createTaskRequest)
-	middleware.CheckToken(r)
 	mCreateTask := convertCreateTaskRequestToModel(createTaskRequest)
 	openID, _ := middleware.GetOpenID(r)
 	mCreateTask.CreateUser = openID
@@ -76,18 +75,18 @@ func sendTemplateMsg(task *models.Task) {
 	data := []byte(task.AppointTo)
 	var appointTo AppointTo
 	err := json.Unmarshal(data, &appointTo)
-	if err!=nil {
-		log.Error("解析指派人出错","err",err.Error())
+	if err != nil {
+		log.Error("解析指派人出错", "err", err.Error())
 	}
 	// 所有人
 	if appointTo.IsAll {
 		openIds, err := models.MGroupUser.GetUserOpenIDs(task.GroupID)
 		if err != nil {
-			log.Error("获取群成员OpenID失败","err",err.Error())
+			log.Error("获取群成员OpenID失败", "err", err.Error())
 		}
 		if len(openIds) > 0 {
 			formIds := models.MGroupUser.GetFormIds(openIds)
-			for _,formId := range formIds {
+			for _, formId := range formIds {
 				templateMsg.FormID = formId
 				go utils.SendTemplate(templateMsg)
 			}
@@ -95,11 +94,11 @@ func sendTemplateMsg(task *models.Task) {
 	} else {
 		// 指定人
 		var openIds []string
-		for _,exerciser := range appointTo.Exercisers {
+		for _, exerciser := range appointTo.Exercisers {
 			openIds = append(openIds, exerciser.userOpenID)
 		}
 		formIds := models.MGroupUser.GetFormIds(openIds)
-		for _,formId := range formIds {
+		for _, formId := range formIds {
 			templateMsg.FormID = formId
 			go utils.SendTemplate(templateMsg)
 		}

@@ -16,7 +16,7 @@ type TaskUser struct {
 	IsDelete   bool      `gorm:"column:is_delete"`
 }
 
-func (*TaskUser) Name() string  {
+func (*TaskUser) Name() string {
 	return "task_user"
 }
 
