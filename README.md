@@ -10,7 +10,7 @@
 
 安装：
 ```go
-go get -u gitee.com/johng/gf
+go get -u github.com/gogf/gf
 ```
 
 ##### 服务绑定:

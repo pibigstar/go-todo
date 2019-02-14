@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitee.com/johng/gf/g"
+	"github.com/gogf/gf/g"
 	"github.com/pibigstar/go-todo/config"
 	_ "github.com/pibigstar/go-todo/controller"
 	"github.com/pibigstar/go-todo/utils/logger"

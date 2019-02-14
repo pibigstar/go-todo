@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"gitee.com/johng/gf/g"
-	"gitee.com/johng/gf/g/net/ghttp"
-	"gitee.com/johng/gf/g/util/gvalid"
+	"github.com/gogf/gf/g"
+	"github.com/gogf/gf/g/net/ghttp"
+	"github.com/gogf/gf/g/util/gvalid"
 	"github.com/pibigstar/go-todo/config"
 	"github.com/pibigstar/go-todo/utils"
 )

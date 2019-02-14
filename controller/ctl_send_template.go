@@ -3,8 +3,8 @@ package controller
 import (
 	"fmt"
 
-	"gitee.com/johng/gf/g"
-	"gitee.com/johng/gf/g/net/ghttp"
+	"github.com/gogf/gf/g"
+	"github.com/gogf/gf/g/net/ghttp"
 	"github.com/pibigstar/go-todo/constant"
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/utils"
