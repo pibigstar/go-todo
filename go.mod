@@ -5,7 +5,7 @@ module github.com/pibigstar/go-todo
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis v6.15.0+incompatible
-	github.com/gogf/gf v1.5.1
+	github.com/gogf/gf v1.5.15
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/pborman/uuid v1.2.0
