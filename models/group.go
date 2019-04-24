@@ -1,6 +1,8 @@
 package models
 
 import (
+	"github.com/gogf/gf/g/util/gconv"
+	"github.com/jinzhu/gorm"
 	"time"
 
 	"github.com/pibigstar/go-todo/models/db"
@@ -39,6 +41,9 @@ func (*Group) Create(group *Group) error {
 func (group *Group) GetGroupByID(groupID int) (*Group, error) {
 	err := db.Mysql.Where("id = ?", groupID).First(group).Error
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Info("没有此组织","groupId",gconv.String(groupID))
+		}
 		return nil, err
 	}
 	return group, nil

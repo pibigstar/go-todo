@@ -88,8 +88,17 @@ func joinGroup(r *ghttp.Request) {
 			r.Exit()
 		}
 	}
+
+
+
 	groupUser := convertJoinGroupToModel(joinGroupRequest)
 	groupUser.UserID, _ = middleware.GetOpenID(r)
+	// 判断是否已经加入该组织了
+	isExist, err := models.MGroupUser.IsExist(groupUser.UserID, group.ID)
+	if isExist {
+		r.Response.WriteJson(utils.ErrorResponse("你已加入该组织，请不要重复加入"))
+		r.Exit()
+	}
 	err = models.MGroupUser.Create(groupUser)
 	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))

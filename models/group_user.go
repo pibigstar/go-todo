@@ -24,12 +24,12 @@ type GroupUser struct {
 }
 
 func (*GroupUser) Name() string {
-	return "group_user"
+	return "group_users"
 }
 
 // Insert 创建
 func (*GroupUser) Create(groupUser *GroupUser) error {
-	return db.Mysql.Insert(groupUser)
+	return db.Mysql.Insert(&groupUser)
 }
 
 // GetGroupsByUserOpenID 获取用户加入的群
@@ -68,4 +68,18 @@ func (*GroupUser) GetFormIds(openIds []string) []string {
 		}
 	}
 	return formIds
+}
+func (user *GroupUser) IsExist(openId string, groupId int)(bool,error) {
+	var result = &GroupUser{}
+	err := db.Mysql.Model(user).Where("user_id = ? and group_id = ?", openId, groupId).Find(&result).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false,nil
+		}
+		return false,err
+	}
+	if result != nil {
+		return true, nil
+	}
+	return false,nil
 }
