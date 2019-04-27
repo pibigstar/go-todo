@@ -18,7 +18,8 @@ var MGroupUser = &GroupUser{}
 type GroupUser struct {
 	ID         int       `gorm:"column:id"`
 	GroupID    int       `gorm:"group_id"`
-	UserID     string    `gorm:"user_id"` //用户OpenID
+	UserID     string    `gorm:"user_id"`   //用户OpenID
+	UserName   string    `gorm:"user_name"` //用户名
 	CreateTime time.Time `gorm:"column:create_time"`
 	IsDelete   bool      `gorm:"column:is_delete"`
 }
@@ -69,17 +70,26 @@ func (*GroupUser) GetFormIds(openIds []string) []string {
 	}
 	return formIds
 }
-func (user *GroupUser) IsExist(openId string, groupId int)(bool,error) {
+func (user *GroupUser) IsExist(openId string, groupId int) (bool, error) {
 	var result = &GroupUser{}
 	err := db.Mysql.Model(user).Where("user_id = ? and group_id = ?", openId, groupId).Find(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return false,nil
+			return false, nil
 		}
-		return false,err
+		return false, err
 	}
 	if result != nil {
 		return true, nil
 	}
-	return false,nil
+	return false, nil
+}
+func (user *GroupUser) GetUsers(groupId int) ([]GroupUser,error) {
+	var users []GroupUser
+	err := db.Mysql.Model(user).Where("group_id = ?", groupId).Find(&users).Error
+	if err != nil {
+		log.Error("获取此群下的成员失败","GroupId",groupId)
+		return nil,err
+	}
+	return users,nil
 }

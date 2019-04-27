@@ -16,6 +16,7 @@ func init() {
 	s.BindHandler("/group/list", listGroups)
 	s.BindHandler("/group/join", joinGroup)
 	s.BindHandler("/group/search", searchGroup)
+	s.BindHandler("/group/members", getMembers)
 }
 
 // createGroup 创建组织
@@ -88,9 +89,6 @@ func joinGroup(r *ghttp.Request) {
 			r.Exit()
 		}
 	}
-
-
-
 	groupUser := convertJoinGroupToModel(joinGroupRequest)
 	groupUser.UserID, _ = middleware.GetOpenID(r)
 	// 判断是否已经加入该组织了
@@ -99,11 +97,28 @@ func joinGroup(r *ghttp.Request) {
 		r.Response.WriteJson(utils.ErrorResponse("你已加入该组织，请不要重复加入"))
 		r.Exit()
 	}
+	// 获取用户名
+	user, err := models.MUser.GetUserByOpenID(groupUser.UserID)
+	if err != nil {
+		log.Info("此用户名为空","OpenId",groupUser.UserID)
+	}
+	groupUser.UserName = user.NickName
 	err = models.MGroupUser.Create(groupUser)
 	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
 	r.Response.WriteJson(utils.SuccessResponse("ok"))
+}
+// getMembers 获取此群下面的群成员
+func getMembers(r *ghttp.Request) {
+	getMemberRequest := new(GetMemberRequest)
+	r.GetToStruct(getMemberRequest)
+	groupUsers, err := models.MGroupUser.GetUsers(getMemberRequest.GroupId)
+	if err != nil {
+		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
+		r.Exit()
+	}
+	r.Response.WriteJson(utils.SuccessWithData("ok",groupUsers))
 }
 
 func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
@@ -172,4 +187,8 @@ type SearchGroupResponse struct {
 	GroupID       int    `json:"groupId"`
 	JoinMethod    string `json:"joinMethod"`
 	Question      string `json:"question"`
+}
+
+type GetMemberRequest struct {
+	GroupId int `json:"groupId"`
 }
