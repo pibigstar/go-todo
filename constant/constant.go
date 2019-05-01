@@ -10,7 +10,7 @@ const (
 	// redis存储formID前缀
 	Redis_Prefix_Form_ID = "todo:formID:%s"
 	// 收集的用户的formID,OpenID
-	Collection_Form_ID_Prefix  = "formIds:%s"
+	Collection_Form_ID_Prefix = "formIds:%s"
 	// 收集的用户的formID的过期时间
 	User_Form_ID_Expire = 7 * 24 * time.Hour
 )

@@ -8,9 +8,9 @@ import (
 	"github.com/pibigstar/go-todo/utils"
 )
 
-func init(){
+func init() {
 	s := g.Server()
-	s.BindHandler("/collect",collectFormId)
+	s.BindHandler("/collect", collectFormId)
 }
 
 type CollectionFormID struct {
@@ -18,12 +18,12 @@ type CollectionFormID struct {
 }
 
 // 收集用户的formId
-func collectFormId(r *ghttp.Request){
+func collectFormId(r *ghttp.Request) {
 	collection := new(CollectionFormID)
 	r.GetToStruct(collection)
 	openID, _ := middleware.GetOpenID(r)
-	err := models.CollectFormID(openID,collection.FormID)
-	if err!=nil {
+	err := models.CollectFormID(openID, collection.FormID)
+	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 		r.Exit()
 	}

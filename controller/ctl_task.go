@@ -16,6 +16,8 @@ import (
 func init() {
 	s := g.Server()
 	s.BindHandler("/task/create", createTask)
+	s.BindHandler("/task/list", listTasks)
+	s.BindHandler("/task/changeStatus", changeStatus)
 }
 
 type Exerciser struct {
@@ -32,9 +34,35 @@ type CreateTaskRequest struct {
 	TaskContent    string    `json:"taskContent"`
 	AppointTo      string    `json:"appointTo"`
 	CompletionTime time.Time `json:"completionTime"`
-	GroupID        int       `json:"group_id"`
+	GroupID        int       `json:"groupId"`
+	GroupName      string    `json:"groupName"`
 	Tips           string    `json:"tips"`
 	IsRemind       bool      `json:"isRemind"`
+	RemindAfterFin bool      `json:"remindAfterFin"`
+}
+
+type ListTaskRequest struct {
+	Status int    `json:"status"`
+	Title  string `json:"title"`
+}
+
+type ListTaskResponse struct {
+	Tasks     []Tasks `json:"tasks"`
+	UnReadNum int     `json:"unReadNum"`
+}
+
+type Tasks struct {
+	Id        int    `json:"id"`
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+	Time      string `json:"time"`
+	IsRead    bool   `json:"isRead"`
+	GroupName string `json:"groupName"`
+}
+
+type ChangeStatusRequest struct {
+	Id     int `json:"id"`
+	Status int `json:"status"`
 }
 
 func createTask(r *ghttp.Request) {
@@ -43,16 +71,46 @@ func createTask(r *ghttp.Request) {
 	mCreateTask := convertCreateTaskRequestToModel(createTaskRequest)
 	openID, _ := middleware.GetOpenID(r)
 	mCreateTask.CreateUser = openID
-	taskId := models.MTask.Create(mCreateTask)
-	if taskId == 0 {
+	err := models.MTask.Create(mCreateTask)
+	if err != nil {
 		log.Error("创建任务失败")
 		r.Response.WriteJson(utils.ErrorResponse("创建任务失败"))
 		r.Exit()
 	}
+	// 开启定时提醒
 	if mCreateTask.IsRemind {
 		go sendTemplateMsg(mCreateTask)
 	}
 	r.Response.WriteJson(utils.SuccessResponse("创建成功"))
+}
+
+func listTasks(r *ghttp.Request) {
+	listTaskRequest := new(ListTaskRequest)
+	r.GetToStruct(listTaskRequest)
+
+	openId, err := middleware.GetOpenID(r)
+	if err != nil {
+		r.Response.WriteJson(utils.ErrorResponse("user is not login"))
+		r.Exit()
+	}
+	tasks, err := models.MTask.ListTask(openId, listTaskRequest.Status, listTaskRequest.Title)
+	if err != nil {
+		log.Error("list tasks is failed", "openId", openId, "status", listTaskRequest.Status)
+	}
+	response := convertListTaskToResponse(tasks)
+	r.Response.WriteJson(utils.SuccessWithData("OK", response))
+}
+
+func changeStatus(r *ghttp.Request) {
+	changeStatusRequest := new(ChangeStatusRequest)
+	r.GetToStruct(changeStatusRequest)
+
+	err := models.MTask.ChangeStatus(changeStatusRequest.Id, changeStatusRequest.Status)
+	if err != nil {
+		r.Response.WriteJson(utils.ErrorResponse("update status is failed"))
+		r.Exit()
+	}
+	r.Response.WriteJson(utils.SuccessResponse("OK"))
 }
 
 func sendTemplateMsg(task *models.Task) {
@@ -114,7 +172,32 @@ func convertCreateTaskRequestToModel(request *CreateTaskRequest) *models.Task {
 		IsRemind:       request.IsRemind,
 		Tips:           request.Tips,
 		GroupID:        request.GroupID,
+		GroupName:      request.GroupName,
 		IsDelete:       false,
+		IsRead:         false,
 		CreateTime:     time.Now(),
+	}
+}
+
+func convertListTaskToResponse(tasks []models.Task) *ListTaskResponse {
+	var taskResponse []Tasks
+	var unReadNum = 0
+	for _, task := range tasks {
+		newTask := Tasks{
+			Id:        task.ID,
+			Title:     task.TaskTitle,
+			Content:   task.TaskContent,
+			Time:      utils.DateFormat(task.CompletionTime),
+			IsRead:    task.IsRead,
+			GroupName: task.GroupName,
+		}
+		if !task.IsRead {
+			unReadNum++
+		}
+		taskResponse = append(taskResponse, newTask)
+	}
+	return &ListTaskResponse{
+		Tasks:     taskResponse,
+		UnReadNum: unReadNum,
 	}
 }

@@ -34,15 +34,15 @@ func (Group) TableName() string {
 
 // Insert 创建
 func (*Group) Create(group *Group) error {
-	return db.Mysql.Insert(&group)
+	return db.Mysql.Table("groups").Create(&group).Error
 }
 
 // GetGroupByID 根据ID获取组织
 func (group *Group) GetGroupByID(groupID int) (*Group, error) {
-	err := db.Mysql.Where("id = ?", groupID).First(group).Error
+	err := db.Mysql.Table("groups").Where("id = ?", groupID).First(group).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			log.Info("没有此组织","groupId",gconv.String(groupID))
+			log.Info("没有此组织", "groupId", gconv.String(groupID))
 		}
 		return nil, err
 	}

@@ -33,7 +33,7 @@ func (user *User) Create() error {
 }
 
 func (user *User) GetUserByOpenID(openID string) (*User, error) {
-	err := db.Mysql.Where("opendId = ?", openID).First(&user).Error
+	err := db.Mysql.Table("users").Where("opendId = ?", openID).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

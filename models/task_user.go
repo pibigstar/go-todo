@@ -21,5 +21,5 @@ func (*TaskUser) Name() string {
 }
 
 func (*TaskUser) Create(taskUser *TaskUser) error {
-	return db.Mysql.Insert(taskUser)
+	return db.Mysql.Table("task_user").Create(taskUser).Error
 }

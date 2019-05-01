@@ -100,7 +100,7 @@ func joinGroup(r *ghttp.Request) {
 	// 获取用户名
 	user, err := models.MUser.GetUserByOpenID(groupUser.UserID)
 	if err != nil {
-		log.Info("此用户名为空","OpenId",groupUser.UserID)
+		log.Info("此用户名为空", "OpenId", groupUser.UserID)
 	}
 	groupUser.UserName = user.NickName
 	err = models.MGroupUser.Create(groupUser)
@@ -109,6 +109,7 @@ func joinGroup(r *ghttp.Request) {
 	}
 	r.Response.WriteJson(utils.SuccessResponse("ok"))
 }
+
 // getMembers 获取此群下面的群成员
 func getMembers(r *ghttp.Request) {
 	getMemberRequest := new(GetMemberRequest)
@@ -118,7 +119,7 @@ func getMembers(r *ghttp.Request) {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 		r.Exit()
 	}
-	r.Response.WriteJson(utils.SuccessWithData("ok",groupUsers))
+	r.Response.WriteJson(utils.SuccessWithData("ok", groupUsers))
 }
 
 func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {

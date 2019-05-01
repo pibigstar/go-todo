@@ -25,7 +25,7 @@ type GroupUser struct {
 }
 
 func (*GroupUser) Name() string {
-	return "group_users"
+	return "group_user"
 }
 
 // Insert 创建
@@ -72,7 +72,7 @@ func (*GroupUser) GetFormIds(openIds []string) []string {
 }
 func (user *GroupUser) IsExist(openId string, groupId int) (bool, error) {
 	var result = &GroupUser{}
-	err := db.Mysql.Model(user).Where("user_id = ? and group_id = ?", openId, groupId).Find(&result).Error
+	err := db.Mysql.Table("group_user").Where("user_id = ? and group_id = ?", openId, groupId).Find(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return false, nil
@@ -84,12 +84,12 @@ func (user *GroupUser) IsExist(openId string, groupId int) (bool, error) {
 	}
 	return false, nil
 }
-func (user *GroupUser) GetUsers(groupId int) ([]GroupUser,error) {
+func (user *GroupUser) GetUsers(groupId int) ([]GroupUser, error) {
 	var users []GroupUser
-	err := db.Mysql.Model(user).Where("group_id = ?", groupId).Find(&users).Error
+	err := db.Mysql.Table("group_user").Where("group_id = ?", groupId).Find(&users).Error
 	if err != nil {
-		log.Error("获取此群下的成员失败","GroupId",groupId)
-		return nil,err
+		log.Error("获取此群下的成员失败", "GroupId", groupId)
+		return nil, err
 	}
-	return users,nil
+	return users, nil
 }
