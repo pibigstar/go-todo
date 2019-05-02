@@ -26,12 +26,26 @@ func createGroup(r *ghttp.Request) {
 	mCreateGroup := convertCreateGroupToModel(createGroupRequest)
 	openID, err := middleware.GetOpenID(r)
 	mCreateGroup.GroupMaster = openID
+	mCreateGroup.CreateUser = openID
 	err = models.MGroup.Create(mCreateGroup)
 	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
+	// get user info
+	user, err := models.MUser.GetUserByOpenID(openID)
+	if err != nil {
+		log.Error("get user is failed","openId",openID)
+	}
+	// set the create user to group_user
+	groupUser := &models.GroupUser{
+		GroupID: mCreateGroup.ID,
+		UserName: user.NickName,
+		UserID: openID,
+		IsDelete: false,
+		CreateTime: time.Now(),
+	}
+	models.MGroupUser.Create(groupUser)
 	r.Response.WriteJson(utils.SuccessResponse("ok"))
-
 }
 
 // listGroups 获取用户创建的群

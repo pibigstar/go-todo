@@ -13,7 +13,7 @@ var MGroup = &Group{}
 
 // Group 组织表
 type Group struct {
-	ID            int
+	ID            int       `gorm:"column:id;primary_key"`
 	GroupName     string    `gorm:"column:group_name"`
 	GroupDescribe string    `gorm:"column:group_describe"`
 	GroupMaster   string    `gorm:"column:group_master"`

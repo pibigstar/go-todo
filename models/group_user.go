@@ -16,7 +16,7 @@ var MGroupUser = &GroupUser{}
 
 // GroupUser 组织用户关联实体
 type GroupUser struct {
-	ID         int       `gorm:"column:id"`
+	ID         int       `gorm:"column:id;primary_key"`
 	GroupID    int       `gorm:"group_id"`
 	UserID     string    `gorm:"user_id"`   //用户OpenID
 	UserName   string    `gorm:"user_name"` //用户名
@@ -24,7 +24,7 @@ type GroupUser struct {
 	IsDelete   bool      `gorm:"column:is_delete"`
 }
 
-func (*GroupUser) Name() string {
+func (*GroupUser) TableName() string {
 	return "group_user"
 }
 
@@ -34,10 +34,10 @@ func (*GroupUser) Create(groupUser *GroupUser) error {
 }
 
 // GetGroupsByUserOpenID 获取用户加入的群
-func (*GroupUser) GetUserJoinGroups(openID string) (*[]Group, error) {
+func (user *GroupUser) GetUserJoinGroups(openID string) (*[]Group, error) {
 	var groupIDs []int
 	var groups []Group
-	err := db.Mysql.Table("group_user").Where("user_id = ?", openID).Pluck("group_id", &groupIDs).Error
+	err := db.Mysql.Table(user.TableName()).Where("user_id = ?", openID).Pluck("group_id", &groupIDs).Error
 	if err == gorm.ErrRecordNotFound || len(groupIDs) == 0 {
 		return nil, errors.New("此用户没有加入任何群")
 	}
@@ -51,7 +51,7 @@ func (*GroupUser) GetUserJoinGroups(openID string) (*[]Group, error) {
 // GetUserOpenIDs 获取某个群的所有群成员的OpenID
 func (user *GroupUser) GetUserOpenIDs(groupID int) ([]string, error) {
 	var userOpenIds []string
-	err := db.Mysql.Table("group_user").
+	err := db.Mysql.Table(user.TableName()).
 		Where("group_id in (?)", groupID).
 		Pluck("user_id", &userOpenIds).Error
 	if err != nil {
@@ -72,7 +72,7 @@ func (*GroupUser) GetFormIds(openIds []string) []string {
 }
 func (user *GroupUser) IsExist(openId string, groupId int) (bool, error) {
 	var result = &GroupUser{}
-	err := db.Mysql.Table("group_user").Where("user_id = ? and group_id = ?", openId, groupId).Find(&result).Error
+	err := db.Mysql.Table(user.TableName()).Where("user_id = ? and group_id = ?", openId, groupId).Find(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return false, nil
@@ -86,7 +86,7 @@ func (user *GroupUser) IsExist(openId string, groupId int) (bool, error) {
 }
 func (user *GroupUser) GetUsers(groupId int) ([]GroupUser, error) {
 	var users []GroupUser
-	err := db.Mysql.Table("group_user").Where("group_id = ?", groupId).Find(&users).Error
+	err := db.Mysql.Table(user.TableName()).Where("group_id = ?", groupId).Find(&users).Error
 	if err != nil {
 		log.Error("获取此群下的成员失败", "GroupId", groupId)
 		return nil, err

@@ -10,7 +10,7 @@ import (
 var MTask = &Task{}
 
 type Task struct {
-	ID             int
+	ID             int       `gorm:"column:id;primary_key"`
 	TaskTitle      string    `gorm:"column:task_title"`
 	TaskContent    string    `gorm:"column:task_content"`
 	AppointTo      string    `gorm:"column:appoint_to"`
@@ -26,12 +26,12 @@ type Task struct {
 	CreateTime     time.Time `gorm:"column:create_time"`
 }
 
-func (*Task) Name() string {
+func (*Task) TableName() string {
 	return "task"
 }
 
 func (*Task) Create(task *Task) error {
-	err := db.Mysql.Table("task").Create(task).Error
+	err := db.Mysql.Table(task.TableName()).Create(task).Error
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func (*Task) Create(task *Task) error {
 }
 func (task *Task) ListTask(openId string, status int, title string) ([]Task, error) {
 	var tasks []Task
-	model := db.Mysql.Table("task").Where("appoint_to = ? and status = ?", openId, status)
+	model := db.Mysql.Table(task.TableName()).Where("appoint_to = ? and status = ?", openId, status)
 	if title != "" {
 		title = "%" + title + "%"
 		model = model.Where("task_title like ?", title)
@@ -51,6 +51,19 @@ func (task *Task) ListTask(openId string, status int, title string) ([]Task, err
 	return tasks, nil
 }
 func (task *Task) ChangeStatus(id int, status int) error {
-	err := db.Mysql.Table("task").Where("id = ?", id).UpdateColumn("status", status).Error
+	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).UpdateColumn("status", status).Error
+	return err
+}
+func (task *Task) GetTask(id int) (*Task, error) {
+	var taskModel Task
+	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).Find(&taskModel).Error
+	if err != nil {
+		return nil, err
+	}
+	return &taskModel, nil
+}
+
+func (task *Task) SetRead(id int) error {
+	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).UpdateColumn("is_read", "1").Error
 	return err
 }

@@ -16,10 +16,10 @@ type TaskUser struct {
 	IsDelete   bool      `gorm:"column:is_delete"`
 }
 
-func (*TaskUser) Name() string {
+func (*TaskUser) TableName() string {
 	return "task_user"
 }
 
-func (*TaskUser) Create(taskUser *TaskUser) error {
-	return db.Mysql.Table("task_user").Create(taskUser).Error
+func (t *TaskUser) Create(taskUser *TaskUser) error {
+	return db.Mysql.Table(t.TableName()).Create(taskUser).Error
 }

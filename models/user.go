@@ -32,10 +32,11 @@ func (user *User) Create() error {
 	return db.Mysql.Insert(&user)
 }
 
-func (user *User) GetUserByOpenID(openID string) (*User, error) {
-	err := db.Mysql.Table("users").Where("opendId = ?", openID).First(&user).Error
+func (t *User) GetUserByOpenID(openID string) (*User, error) {
+	var userModel User
+	err := db.Mysql.Table(t.TableName()).Where("openId = ?", openID).First(&userModel).Error
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return &userModel, nil
 }
