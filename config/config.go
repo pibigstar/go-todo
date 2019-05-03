@@ -31,6 +31,7 @@ type serverConfig struct {
 	WxLoginURL      string
 	GroupCodeSecret string
 	SecretKey       string
+	ShowSQL         bool
 }
 
 type serverStartupFlags struct {
@@ -72,6 +73,7 @@ func buildServerConfig() {
 		WxLoginURL:      cast.ToString(cfg["wxloginurl"]),
 		GroupCodeSecret: cast.ToString(cfg["groupcodesecret"]),
 		SecretKey:       cast.ToString(cfg["secretkey"]),
+		ShowSQL:       	 cast.ToBool(cfg["showsql"]),
 	}
 	ServerConfig.Port = ServerStartupFlags.Port
 	ServerConfig.Host = ServerStartupFlags.Host

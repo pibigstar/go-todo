@@ -17,3 +17,4 @@ appid=""
 secret=""
 groupcodesecret=""
 secretkey=""
+showsql=true

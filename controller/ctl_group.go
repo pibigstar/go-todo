@@ -17,6 +17,7 @@ func init() {
 	s.BindHandler("/group/join", joinGroup)
 	s.BindHandler("/group/search", searchGroup)
 	s.BindHandler("/group/members", getMembers)
+	s.BindHandler("/group/my/list", listMyGroups)
 }
 
 // createGroup 创建组织
@@ -39,9 +40,11 @@ func createGroup(r *ghttp.Request) {
 	// set the create user to group_user
 	groupUser := &models.GroupUser{
 		GroupID: mCreateGroup.ID,
-		UserName: user.NickName,
+		GroupName: mCreateGroup.GroupName,
 		UserID: openID,
+		UserName: user.NickName,
 		IsDelete: false,
+		IsCreate: true,
 		CreateTime: time.Now(),
 	}
 	models.MGroupUser.Create(groupUser)
@@ -136,6 +139,27 @@ func getMembers(r *ghttp.Request) {
 	r.Response.WriteJson(utils.SuccessWithData("ok", groupUsers))
 }
 
+func listMyGroups(r *ghttp.Request) {
+	openId, err := middleware.GetOpenID(r)
+	if err!=nil {
+		log.Error("get user openId is failed","err",err.Error())
+		r.Exit()
+	}
+	createGroups, err := models.MGroupUser.ListMyCreateGroup(openId)
+	if err != nil {
+		log.Error("list my create group is failed","err",err.Error())
+	}
+	joinGroups, err := models.MGroupUser.ListMyJoinGroup(openId)
+	if err != nil {
+		log.Error("list my create join is failed","err",err.Error())
+	}
+	response := &ListMyGroupResponse{
+		CreateGroups: createGroups,
+		JoinGroups: joinGroups,
+	}
+	r.Response.WriteJson(utils.SuccessWithData("OK",response))
+}
+
 func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
 	groupCode := utils.GetUUID()
 	return &models.Group{
@@ -206,4 +230,9 @@ type SearchGroupResponse struct {
 
 type GetMemberRequest struct {
 	GroupId int `json:"groupId"`
+}
+
+type ListMyGroupResponse struct {
+	CreateGroups []models.GroupUser `json:"createGroups"`
+	JoinGroups []models.GroupUser `json:"joinGroups"`
 }

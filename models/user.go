@@ -40,3 +40,7 @@ func (t *User) GetUserByOpenID(openID string) (*User, error) {
 	}
 	return &userModel, nil
 }
+func (t *User) UpdateUserInfo(user *User) error{
+	err := db.Mysql.Table(t.TableName()).Where("openId = ?", user.OpenID).Updates(user).Error
+	return err
+}

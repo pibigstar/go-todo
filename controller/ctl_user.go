@@ -3,6 +3,8 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pibigstar/go-todo/middleware"
+	"github.com/pibigstar/go-todo/models"
 	"io/ioutil"
 	"net/http"
 
@@ -16,6 +18,8 @@ import (
 func init() {
 	s := g.Server()
 	s.BindHandler("/wxLogin", wxLogin)
+	s.BindHandler("/user/info", getUserInfo)
+	s.BindHandler("/user/update", updateUserInfo)
 }
 
 // WxLoginRequest 微信登录request
@@ -31,6 +35,14 @@ type WxLoginResponse struct {
 	Errcode    int    `json:"errcode"`
 	ErrMsg     string `json:"errMsg"`
 	Token      string `json:"token"`
+}
+
+type UpdateUserInfoRequest struct {
+	NickName string `json:"nickName"`
+	RealName string `json:"realName"`
+	Gender int `json:"gender"`
+	Phone string `json:"phone"`
+	ReceiveRemind bool `json:"receiveRemind"`
 }
 
 // WxLogin 微信登录
@@ -61,4 +73,43 @@ func wxLogin(r *ghttp.Request) {
 	}
 	wxLoginResp.Token = token
 	r.Response.WriteJson(wxLoginResp)
+}
+
+func getUserInfo(r *ghttp.Request) {
+	openId, err := middleware.GetOpenID(r)
+	if err!=nil {
+		log.Error("get user openId is failed","err",err.Error())
+		r.Exit()
+	}
+	user, err := models.MUser.GetUserByOpenID(openId)
+	if err != nil {
+		log.Error("get user info is failed","openId",openId)
+	}
+	r.Response.WriteJson(utils.SuccessWithData("OK",user))
+}
+
+func updateUserInfo(r *ghttp.Request) {
+	updateUserInfoRequest := new(UpdateUserInfoRequest)
+	r.GetToStruct(updateUserInfoRequest)
+
+	openId, err := middleware.GetOpenID(r)
+	if err!=nil {
+		log.Error("get user openId is failed","err",err.Error())
+		r.Exit()
+	}
+	model := convertRequestToModel(updateUserInfoRequest)
+	model.OpenID = openId
+	err = models.MUser.UpdateUserInfo(model)
+	if err != nil {
+		log.Error("update user info is failed","openId",openId)
+	}
+	r.Response.WriteJson(utils.SuccessResponse("OK"))
+}
+func convertRequestToModel(request *UpdateUserInfoRequest) *models.User{
+	return &models.User{
+		NickName: request.NickName,
+		RealName: request.RealName,
+		Gender: request.Gender,
+		Phone: request.Phone,
+	}
 }

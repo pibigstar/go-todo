@@ -18,10 +18,12 @@ var MGroupUser = &GroupUser{}
 type GroupUser struct {
 	ID         int       `gorm:"column:id;primary_key"`
 	GroupID    int       `gorm:"group_id"`
+	GroupName  string    `gorm:"group_name"`
 	UserID     string    `gorm:"user_id"`   //用户OpenID
 	UserName   string    `gorm:"user_name"` //用户名
 	CreateTime time.Time `gorm:"column:create_time"`
 	IsDelete   bool      `gorm:"column:is_delete"`
+	IsCreate   bool      `gorm:"column:is_create"`
 }
 
 func (*GroupUser) TableName() string {
@@ -92,4 +94,22 @@ func (user *GroupUser) GetUsers(groupId int) ([]GroupUser, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (t *GroupUser) ListMyCreateGroup(openId string)([]GroupUser, error) {
+	var groups []GroupUser
+	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId,true).Find(&groups).Error
+	if err != nil {
+		return nil,err
+	}
+	return groups,nil
+}
+
+func (t *GroupUser) ListMyJoinGroup(openId string)([]GroupUser, error) {
+	var groups []GroupUser
+	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId,false).Find(&groups).Error
+	if err != nil {
+		return nil,err
+	}
+	return groups,nil
 }
