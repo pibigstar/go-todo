@@ -109,7 +109,37 @@ c := cron.New()
 	c.Start()
 	defer c.Stop()
 ```
+## 3. 部署
 
+### 3.1 打包成可执行文件
+```bash
+cd scripts
+./build.bat
+```
+
+### 3.2 编译成镜像
+```bash
+docker build -t go-todo .
+```
+### 3.3 启动容器
+```bash
+docker run -dit -p 7410:7410 --name todo-container go-todo /bin/bash
+```
+
+### 3.4 进入容器
+```bash
+docker exec -it todo-container /bin/bash
+```
+
+### 3.5 删除镜像
+```bash
+# 停止容器
+docker stop todo-container
+# 删除容器
+docker rm todo-container
+# 删除镜像
+docker rmi go-todo
+```
 
 ## 项目结构
 <details>
