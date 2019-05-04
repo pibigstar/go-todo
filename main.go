@@ -21,7 +21,7 @@ func main() {
 	s.SetErrorLogEnabled(true)
 	// 开启https
 	s.EnableHTTPS("https/ssl.pem", "https/ssl.key")
-	s.SetHTTPSPort(7777)
+	s.SetHTTPSPort(443)
 	// 开启性能分析，可访问页面/debug/pprof
 	s.EnablePprof()
 

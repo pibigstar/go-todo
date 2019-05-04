@@ -60,6 +60,7 @@ func wxLogin(r *ghttp.Request) {
 	// 拿到session_key 和 openid
 	client := &http.Client{}
 	url := fmt.Sprintf(config.ServerConfig.WxLoginURL, config.ServerConfig.Appid, config.ServerConfig.Secret, wxLoginRequest.Code)
+	fmt.Println(url)
 	res, err := client.Get(url)
 	if err != nil {
 		log.Error("获取openId失败", "err", err.Error())

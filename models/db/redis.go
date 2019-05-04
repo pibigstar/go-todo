@@ -25,6 +25,7 @@ func (*redis) Name() string {
 func (*redis) Init(conf map[string]interface{}) error {
 	client := goRedis.NewClient(&goRedis.Options{
 		Addr: fmt.Sprintf("%s:%d", cast.ToString(conf["host"]), cast.ToInt(conf["port"])),
+		Password: cast.ToString(conf["password"]),
 		DB:   cast.ToInt(conf["db"]),
 	})
 
