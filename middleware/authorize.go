@@ -21,7 +21,7 @@ func GetOpenID(r *ghttp.Request) (string, error) {
 	}
 	validate := utils.CheckJwtToken(todoToken)
 	if !validate {
-		return "", errors.New("token已过期")
+		return "", errors.New("token is expired")
 	}
 	return token, nil
 }

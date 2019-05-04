@@ -35,16 +35,16 @@ func createGroup(r *ghttp.Request) {
 	// get user info
 	user, err := models.MUser.GetUserByOpenID(openID)
 	if err != nil {
-		log.Error("get user is failed","openId",openID)
+		log.Error("get user is failed", "openId", openID)
 	}
 	// set the create user to group_user
 	groupUser := &models.GroupUser{
-		GroupID: mCreateGroup.ID,
-		GroupName: mCreateGroup.GroupName,
-		UserID: openID,
-		UserName: user.NickName,
-		IsDelete: false,
-		IsCreate: true,
+		GroupID:    mCreateGroup.ID,
+		GroupName:  mCreateGroup.GroupName,
+		UserID:     openID,
+		UserName:   user.NickName,
+		IsDelete:   false,
+		IsCreate:   true,
 		CreateTime: time.Now(),
 	}
 	models.MGroupUser.Create(groupUser)
@@ -141,23 +141,23 @@ func getMembers(r *ghttp.Request) {
 
 func listMyGroups(r *ghttp.Request) {
 	openId, err := middleware.GetOpenID(r)
-	if err!=nil {
-		log.Error("get user openId is failed","err",err.Error())
+	if err != nil {
+		log.Error("get user openId is failed", "err", err.Error())
 		r.Exit()
 	}
 	createGroups, err := models.MGroupUser.ListMyCreateGroup(openId)
 	if err != nil {
-		log.Error("list my create group is failed","err",err.Error())
+		log.Error("list my create group is failed", "err", err.Error())
 	}
 	joinGroups, err := models.MGroupUser.ListMyJoinGroup(openId)
 	if err != nil {
-		log.Error("list my create join is failed","err",err.Error())
+		log.Error("list my create join is failed", "err", err.Error())
 	}
 	response := &ListMyGroupResponse{
 		CreateGroups: createGroups,
-		JoinGroups: joinGroups,
+		JoinGroups:   joinGroups,
 	}
-	r.Response.WriteJson(utils.SuccessWithData("OK",response))
+	r.Response.WriteJson(utils.SuccessWithData("OK", response))
 }
 
 func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
@@ -234,5 +234,5 @@ type GetMemberRequest struct {
 
 type ListMyGroupResponse struct {
 	CreateGroups []models.GroupUser `json:"createGroups"`
-	JoinGroups []models.GroupUser `json:"joinGroups"`
+	JoinGroups   []models.GroupUser `json:"joinGroups"`
 }

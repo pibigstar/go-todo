@@ -14,8 +14,8 @@ type MYSQLLogger struct {
 
 func (logger *MYSQLLogger) Print(values ...interface{}) {
 	var (
-		level           = values[0]
-		source          = values[1]
+		level  = values[0]
+		source = values[1]
 	)
 	if level == "sql" {
 		sql := values[3].(string)
@@ -24,7 +24,6 @@ func (logger *MYSQLLogger) Print(values ...interface{}) {
 		myLog.Println(values)
 	}
 }
-
 
 func init() {
 	logger := &MYSQLLogger{}

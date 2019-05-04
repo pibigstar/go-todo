@@ -26,7 +26,7 @@ type Exerciser struct {
 }
 
 type AppointTo struct {
-	IsAll      bool        `json:"isAll"`
+	IsAll      bool     `json:"isAll"`
 	Exercisers []string `json:"exercisers"`
 }
 
@@ -71,11 +71,11 @@ type GetTaskRequest struct {
 }
 
 type GetTaskResponse struct {
-	Title string 	`json:"title"`
-	Content string `json:"content"`
-	GroupName string `json:"groupName"`
-	UserName string `json:"userName"`
-	CreateTime string `json:"createTime"`
+	Title          string `json:"title"`
+	Content        string `json:"content"`
+	GroupName      string `json:"groupName"`
+	UserName       string `json:"userName"`
+	CreateTime     string `json:"createTime"`
 	CompletionTime string `json:"completionTime"`
 }
 
@@ -100,7 +100,7 @@ func createTask(r *ghttp.Request) {
 			mCreateTask.AppointTo = user.UserID
 			err = models.MTask.Create(mCreateTask)
 			if err != nil {
-				log.Error("create task is failed","user openId",user.UserID)
+				log.Error("create task is failed", "user openId", user.UserID)
 			}
 		}
 	} else {
@@ -150,36 +150,36 @@ func changeStatus(r *ghttp.Request) {
 	r.Response.WriteJson(utils.SuccessResponse("OK"))
 }
 
-func getTask(r *ghttp.Request){
+func getTask(r *ghttp.Request) {
 	getTaskRequest := new(GetTaskRequest)
 	r.GetToStruct(getTaskRequest)
 
 	task, err := models.MTask.GetTask(getTaskRequest.Id)
 	if err != nil {
-		log.Error("get task is failed","taskId",getTaskRequest.Id)
+		log.Error("get task is failed", "taskId", getTaskRequest.Id)
 	}
 	response := convertTaskToResponse(task)
 	user, err := models.MUser.GetUserByOpenID(task.CreateUser)
 	if err != nil {
-		log.Error("get user is failed","userOPenId",task.CreateUser)
+		log.Error("get user is failed", "userOPenId", task.CreateUser)
 	} else {
 		response.UserName = user.NickName
 	}
 	// set isRead is true
 	err = models.MTask.SetRead(getTaskRequest.Id)
 	if err != nil {
-		log.Error("set read is failed","taskId",getTaskRequest.Id)
+		log.Error("set read is failed", "taskId", getTaskRequest.Id)
 	}
-	r.Response.WriteJson(utils.SuccessWithData("OK",response))
+	r.Response.WriteJson(utils.SuccessWithData("OK", response))
 }
 
 func convertTaskToResponse(task *models.Task) *GetTaskResponse {
 	return &GetTaskResponse{
-		Title: task.TaskTitle,
-		Content: task.TaskContent,
-		GroupName: task.GroupName,
+		Title:          task.TaskTitle,
+		Content:        task.TaskContent,
+		GroupName:      task.GroupName,
 		CompletionTime: utils.TimeFormat(task.CompletionTime),
-		CreateTime: utils.TimeFormat(task.CreateTime),
+		CreateTime:     utils.TimeFormat(task.CreateTime),
 	}
 }
 

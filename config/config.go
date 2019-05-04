@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"fmt"
+
 	"github.com/spf13/cast"
 
 	"github.com/pibigstar/go-todo/utils/logger"
@@ -73,7 +74,7 @@ func buildServerConfig() {
 		WxLoginURL:      cast.ToString(cfg["wxloginurl"]),
 		GroupCodeSecret: cast.ToString(cfg["groupcodesecret"]),
 		SecretKey:       cast.ToString(cfg["secretkey"]),
-		ShowSQL:       	 cast.ToBool(cfg["showsql"]),
+		ShowSQL:         cast.ToBool(cfg["showsql"]),
 	}
 	ServerConfig.Port = ServerStartupFlags.Port
 	ServerConfig.Host = ServerStartupFlags.Host

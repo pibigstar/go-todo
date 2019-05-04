@@ -96,20 +96,20 @@ func (user *GroupUser) GetUsers(groupId int) ([]GroupUser, error) {
 	return users, nil
 }
 
-func (t *GroupUser) ListMyCreateGroup(openId string)([]GroupUser, error) {
+func (t *GroupUser) ListMyCreateGroup(openId string) ([]GroupUser, error) {
 	var groups []GroupUser
-	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId,true).Find(&groups).Error
+	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId, true).Find(&groups).Error
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return groups,nil
+	return groups, nil
 }
 
-func (t *GroupUser) ListMyJoinGroup(openId string)([]GroupUser, error) {
+func (t *GroupUser) ListMyJoinGroup(openId string) ([]GroupUser, error) {
 	var groups []GroupUser
-	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId,false).Find(&groups).Error
+	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId, false).Find(&groups).Error
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return groups,nil
+	return groups, nil
 }

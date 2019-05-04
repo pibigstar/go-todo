@@ -3,10 +3,11 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pibigstar/go-todo/middleware"
-	"github.com/pibigstar/go-todo/models"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/pibigstar/go-todo/middleware"
+	"github.com/pibigstar/go-todo/models"
 
 	"github.com/gogf/gf/g"
 	"github.com/gogf/gf/g/net/ghttp"
@@ -38,11 +39,11 @@ type WxLoginResponse struct {
 }
 
 type UpdateUserInfoRequest struct {
-	NickName string `json:"nickName"`
-	RealName string `json:"realName"`
-	Gender int `json:"gender"`
-	Phone string `json:"phone"`
-	ReceiveRemind bool `json:"receiveRemind"`
+	NickName      string `json:"nickName"`
+	RealName      string `json:"realName"`
+	Gender        int    `json:"gender"`
+	Phone         string `json:"phone"`
+	ReceiveRemind bool   `json:"receiveRemind"`
 }
 
 // WxLogin 微信登录
@@ -78,15 +79,15 @@ func wxLogin(r *ghttp.Request) {
 
 func getUserInfo(r *ghttp.Request) {
 	openId, err := middleware.GetOpenID(r)
-	if err!=nil {
-		log.Error("get user openId is failed","err",err.Error())
+	if err != nil {
+		log.Error("get user openId is failed", "err", err.Error())
 		r.Exit()
 	}
 	user, err := models.MUser.GetUserByOpenID(openId)
 	if err != nil {
-		log.Error("get user info is failed","openId",openId)
+		log.Error("get user info is failed", "openId", openId)
 	}
-	r.Response.WriteJson(utils.SuccessWithData("OK",user))
+	r.Response.WriteJson(utils.SuccessWithData("OK", user))
 }
 
 func updateUserInfo(r *ghttp.Request) {
@@ -94,23 +95,23 @@ func updateUserInfo(r *ghttp.Request) {
 	r.GetToStruct(updateUserInfoRequest)
 
 	openId, err := middleware.GetOpenID(r)
-	if err!=nil {
-		log.Error("get user openId is failed","err",err.Error())
+	if err != nil {
+		log.Error("get user openId is failed", "err", err.Error())
 		r.Exit()
 	}
 	model := convertRequestToModel(updateUserInfoRequest)
 	model.OpenID = openId
 	err = models.MUser.UpdateUserInfo(model)
 	if err != nil {
-		log.Error("update user info is failed","openId",openId)
+		log.Error("update user info is failed", "openId", openId)
 	}
 	r.Response.WriteJson(utils.SuccessResponse("OK"))
 }
-func convertRequestToModel(request *UpdateUserInfoRequest) *models.User{
+func convertRequestToModel(request *UpdateUserInfoRequest) *models.User {
 	return &models.User{
 		NickName: request.NickName,
 		RealName: request.RealName,
-		Gender: request.Gender,
-		Phone: request.Phone,
+		Gender:   request.Gender,
+		Phone:    request.Phone,
 	}
 }
