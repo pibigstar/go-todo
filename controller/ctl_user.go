@@ -19,6 +19,7 @@ import (
 func init() {
 	s := g.Server()
 	s.BindHandler("/wxLogin", wxLogin)
+	s.BindHandler("/phoneLogin", phoneLogin)
 	s.BindHandler("/user/info", getUserInfo)
 	s.BindHandler("/user/update", updateUserInfo)
 }
@@ -38,11 +39,17 @@ type WxLoginResponse struct {
 	Token      string `json:"token"`
 }
 
+type PhoneLoginRequest struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+}
+
 type UpdateUserInfoRequest struct {
 	NickName      string `json:"nickName"`
 	RealName      string `json:"realName"`
 	Gender        int    `json:"gender"`
 	Phone         string `json:"phone"`
+	Password      string `json:"password"`
 	ReceiveRemind bool   `json:"receiveRemind"`
 }
 
@@ -75,6 +82,24 @@ func wxLogin(r *ghttp.Request) {
 	}
 	wxLoginResp.Token = token
 	r.Response.WriteJson(wxLoginResp)
+}
+
+func phoneLogin(r *ghttp.Request) {
+	phoneLoginRequest := new(PhoneLoginRequest)
+	r.GetToStruct(phoneLoginRequest)
+
+	user, err := models.MUser.PhoneLogin(phoneLoginRequest.Phone, phoneLoginRequest.Password)
+	if err != nil {
+		log.Error("user login is failed", "phone", phoneLoginRequest.Phone, "password", phoneLoginRequest.Password)
+		r.Response.WriteJson(utils.ErrorResponse("账号或密码错误"))
+		r.Exit()
+	} else {
+		token, err := utils.GenOpenIDToken(user.OpenID)
+		if err != nil {
+			log.Error("gender token is failed")
+		}
+		r.Response.WriteJson(utils.SuccessWithData("OK", token))
+	}
 }
 
 func getUserInfo(r *ghttp.Request) {
@@ -113,5 +138,6 @@ func convertRequestToModel(request *UpdateUserInfoRequest) *models.User {
 		RealName: request.RealName,
 		Gender:   request.Gender,
 		Phone:    request.Phone,
+		Password: request.Password,
 	}
 }

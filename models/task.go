@@ -44,7 +44,7 @@ func (task *Task) ListTask(openId string, status int, title string) ([]Task, err
 		title = "%" + title + "%"
 		model = model.Where("task_title like ?", title)
 	}
-	err := model.Find(&tasks).Error
+	err := model.Order("create_time desc").Find(&tasks).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -66,4 +66,12 @@ func (task *Task) GetTask(id int) (*Task, error) {
 func (task *Task) SetRead(id int) error {
 	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).UpdateColumn("is_read", "1").Error
 	return err
+}
+func (t *Task) CountTask(openId string, status int)(int,error) {
+	var count int
+	err := db.Mysql.Table(t.TableName()).Where("appoint_to = ? and status = ?", openId, status).Count(&count).Error
+	if err != nil {
+		return 0,err
+	}
+	return count,nil
 }

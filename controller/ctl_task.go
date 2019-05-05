@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/pibigstar/go-todo/constant"
@@ -19,6 +18,7 @@ func init() {
 	s.BindHandler("/task/list", listTasks)
 	s.BindHandler("/task/changeStatus", changeStatus)
 	s.BindHandler("/task/get", getTask)
+	s.BindHandler("/task/getTaskData", getTaskData)
 }
 
 type Exerciser struct {
@@ -26,19 +26,20 @@ type Exerciser struct {
 }
 
 type AppointTo struct {
-	IsAll      bool     `json:"isAll"`
-	Exercisers []string `json:"exercisers"`
+	IsAll     bool   `json:"isAll"`
+	Exerciser string `json:"exerciser"`
 }
 
 type CreateTaskRequest struct {
 	TaskTitle      string    `json:"taskTitle"`
 	TaskContent    string    `json:"taskContent"`
-	AppointTo      string    `json:"appointTo"`
+	Assign         string    `json:"assign"`
 	CompletionTime time.Time `json:"completionTime"`
 	GroupID        int       `json:"groupId"`
 	GroupName      string    `json:"groupName"`
 	Tips           string    `json:"tips"`
 	IsRemind       bool      `json:"isRemind"`
+	IsAll          bool      `json:"isAll"`
 	RemindAfterFin bool      `json:"remindAfterFin"`
 }
 
@@ -79,19 +80,19 @@ type GetTaskResponse struct {
 	CompletionTime string `json:"completionTime"`
 }
 
+type GetTaskDataResponse struct {
+	Todo  int `json:"todo"`
+	Doing int `json:"doing"`
+	Done  int `json:"done"`
+}
+
 func createTask(r *ghttp.Request) {
 	createTaskRequest := new(CreateTaskRequest)
 	r.GetJson().ToStruct(createTaskRequest)
 	mCreateTask := convertCreateTaskRequestToModel(createTaskRequest)
 	openID, _ := middleware.GetOpenID(r)
 	mCreateTask.CreateUser = openID
-	var appointTo AppointTo
-	appointBytes := []byte(mCreateTask.AppointTo)
-	err := json.Unmarshal(appointBytes, &appointTo)
-	if err != nil {
-		log.Error("parse appoint to is failed")
-	}
-	if appointTo.IsAll {
+	if createTaskRequest.IsAll {
 		groupUsers, err := models.MGroupUser.GetUsers(mCreateTask.GroupID)
 		if err != nil {
 			log.Error("get users by group id is failed")
@@ -104,19 +105,17 @@ func createTask(r *ghttp.Request) {
 			}
 		}
 	} else {
-		for _, value := range appointTo.Exercisers {
-			mCreateTask.AppointTo = value
-			err = models.MTask.Create(mCreateTask)
-			if err != nil {
-				log.Error("create task is failed")
-				r.Response.WriteJson(utils.ErrorResponse("创建任务失败"))
-				r.Exit()
-			}
+		mCreateTask.AppointTo = createTaskRequest.Assign
+		err := models.MTask.Create(mCreateTask)
+		if err != nil {
+			log.Error("create task is failed")
+			r.Response.WriteJson(utils.ErrorResponse("创建任务失败"))
+			r.Exit()
 		}
 	}
 	// 开启定时提醒
 	if mCreateTask.IsRemind {
-		go sendTemplateMsg(mCreateTask)
+		go sendTemplateMsg(mCreateTask, createTaskRequest.IsAll)
 	}
 	r.Response.WriteJson(utils.SuccessResponse("创建成功"))
 }
@@ -173,6 +172,23 @@ func getTask(r *ghttp.Request) {
 	r.Response.WriteJson(utils.SuccessWithData("OK", response))
 }
 
+func getTaskData(r *ghttp.Request) {
+	openId, err := middleware.GetOpenID(r)
+	if err != nil {
+		r.Response.WriteJson("请先登录")
+		r.Exit()
+	}
+	todo, err := models.MTask.CountTask(openId, constant.TODO)
+	doing, err := models.MTask.CountTask(openId, constant.DOING)
+	done, err := models.MTask.CountTask(openId, constant.DONE)
+	response := &GetTaskDataResponse{
+		Todo: todo,
+		Doing: doing,
+		Done: done,
+	}
+	r.Response.WriteJson(utils.SuccessWithData("OK",response))
+}
+
 func convertTaskToResponse(task *models.Task) *GetTaskResponse {
 	return &GetTaskResponse{
 		Title:          task.TaskTitle,
@@ -183,7 +199,7 @@ func convertTaskToResponse(task *models.Task) *GetTaskResponse {
 	}
 }
 
-func sendTemplateMsg(task *models.Task) {
+func sendTemplateMsg(task *models.Task, isAll bool) {
 	user, _ := models.MUser.GetUserByOpenID(task.CreateUser)
 	userName := user.RealName
 	if userName == "" {
@@ -200,14 +216,8 @@ func sendTemplateMsg(task *models.Task) {
 	templateMsg.Touser = user.OpenID
 	templateMsg.TemplateID = constant.Tmeplate_Receive_Task_ID
 	// 获取formID
-	data := []byte(task.AppointTo)
-	var appointTo AppointTo
-	err := json.Unmarshal(data, &appointTo)
-	if err != nil {
-		log.Error("parse appoint to is failed", "err", err.Error())
-	}
 	// 所有人
-	if appointTo.IsAll {
+	if isAll {
 		openIds, err := models.MGroupUser.GetUserOpenIDs(task.GroupID)
 		if err != nil {
 			log.Error("get user openIds is failed", "err", err.Error())
@@ -222,9 +232,7 @@ func sendTemplateMsg(task *models.Task) {
 	} else {
 		// 指定人
 		var openIds []string
-		for _, exerciser := range appointTo.Exercisers {
-			openIds = append(openIds, exerciser)
-		}
+		openIds = append(openIds, task.AppointTo)
 		formIds := models.MGroupUser.GetFormIds(openIds)
 		for _, formId := range formIds {
 			templateMsg.FormID = formId
@@ -237,7 +245,7 @@ func convertCreateTaskRequestToModel(request *CreateTaskRequest) *models.Task {
 	return &models.Task{
 		TaskTitle:      request.TaskTitle,
 		TaskContent:    request.TaskContent,
-		AppointTo:      request.AppointTo,
+		AppointTo:      request.Assign,
 		CompletionTime: request.CompletionTime,
 		IsRemind:       request.IsRemind,
 		Tips:           request.Tips,

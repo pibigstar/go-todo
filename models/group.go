@@ -38,21 +38,22 @@ func (*Group) Create(group *Group) error {
 }
 
 // GetGroupByID 根据ID获取组织
-func (group *Group) GetGroupByID(groupID int) (*Group, error) {
-	err := db.Mysql.Table("groups").Where("id = ?", groupID).First(group).Error
+func (t *Group) GetGroupByID(groupID int) (*Group, error) {
+	var group Group
+	err := db.Mysql.Table(t.TableName()).Where("id = ?", groupID).First(&group).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			log.Info("没有此组织", "groupId", gconv.String(groupID))
 		}
 		return nil, err
 	}
-	return group, nil
+	return &group, nil
 }
 
 // GetGroupsByUserID 获取用户创建的组织
-func (group *Group) GetUserCreateGroups(openID string) (*[]Group, error) {
+func (t *Group) GetUserCreateGroups(openID string) (*[]Group, error) {
 	var groups []Group
-	err := db.Mysql.Table("groups").Where("create_user = ?", openID).Find(&groups).Error
+	err := db.Mysql.Table(t.TableName()).Where("create_user = ?", openID).Find(&groups).Error
 	if err != nil {
 		return nil, err
 	}

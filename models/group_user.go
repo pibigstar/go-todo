@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-	"github.com/pibigstar/go-todo/constant"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -65,7 +63,7 @@ func (user *GroupUser) GetUserOpenIDs(groupID int) ([]string, error) {
 func (*GroupUser) GetFormIds(openIds []string) []string {
 	var formIds []string
 	for _, id := range openIds {
-		formId, err := db.Redis.Get(fmt.Sprintf(constant.Redis_Prefix_Form_ID, id)).Result()
+		formId, err := GetCollectionFormID(id)
 		if err == nil {
 			formIds = append(formIds, formId)
 		}
@@ -107,7 +105,9 @@ func (t *GroupUser) ListMyCreateGroup(openId string) ([]GroupUser, error) {
 
 func (t *GroupUser) ListMyJoinGroup(openId string) ([]GroupUser, error) {
 	var groups []GroupUser
-	err := db.Mysql.Table(t.TableName()).Where("user_id = ? and is_create = ?", openId, false).Find(&groups).Error
+	err := db.Mysql.Table(t.TableName()).
+		Where("user_id = ? and is_create = ? and is_delete = ?", openId, false,false).
+		Find(&groups).Error
 	if err != nil {
 		return nil, err
 	}

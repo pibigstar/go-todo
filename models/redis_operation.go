@@ -6,7 +6,6 @@ import (
 	"github.com/pibigstar/go-todo/constant"
 	"github.com/pibigstar/go-todo/models/db"
 	"github.com/pkg/errors"
-	"sort"
 	"time"
 )
 
@@ -59,9 +58,9 @@ func GetCollectionFormID(openID string) (string, error) {
 			newFormIds = append(newFormIds, id)
 		}
 	}
-	// 按过期时间排序
-	sort.Sort(newFormIds)
-	if newFormIds.Len() > 0 {
+	//按过期时间排序
+	//sort.Sort(newFormIds)
+	if len(newFormIds) > 0 {
 		ids, formID := newFormIds.Remove()
 		bytes, _ := json.Marshal(ids)
 		db.Redis.Set(fmt.Sprintf(constant.Collection_Form_ID_Prefix, openID), string(bytes), constant.User_Form_ID_Expire).Result()
@@ -71,7 +70,7 @@ func GetCollectionFormID(openID string) (string, error) {
 }
 
 func (ids formIDs) Len() int {
-	return ids.Len()
+	return len(ids)
 }
 
 func (ids formIDs) Less(i, j int) bool {

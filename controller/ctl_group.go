@@ -18,6 +18,7 @@ func init() {
 	s.BindHandler("/group/search", searchGroup)
 	s.BindHandler("/group/members", getMembers)
 	s.BindHandler("/group/my/list", listMyGroups)
+	s.BindHandler("/group/info", getGroupInfo)
 }
 
 // createGroup 创建组织
@@ -160,8 +161,39 @@ func listMyGroups(r *ghttp.Request) {
 	r.Response.WriteJson(utils.SuccessWithData("OK", response))
 }
 
+func getGroupInfo(r *ghttp.Request) {
+	groupID := r.GetInt("groupId")
+	group, err := models.MGroup.GetGroupByID(groupID)
+	if err != nil {
+		log.Error(err.Error(), "groupID", groupID)
+		r.Response.WriteJson(utils.ErrorResponse("查询组织失败"))
+		r.Exit()
+	}
+	user, err := models.MUser.GetUserByOpenID(group.CreateUser)
+	if err != nil {
+		log.Error("get user info is failed","err",err.Error())
+	}
+	groupResponse := convertGroupInfoToResponse(group)
+	groupResponse.CreateUser = user.NickName
+	r.Response.WriteJson(utils.SuccessWithData("ok!", groupResponse))
+}
+
+func convertGroupInfoToResponse(group *models.Group) *GetGroupInfoResponse {
+	return &GetGroupInfoResponse{
+		ID: group.ID,
+		GroupName: group.GroupName,
+		GroupDescribe: group.GroupDescribe,
+		GroupCode: group.GroupCode,
+		GroupMaster: group.GroupMaster,
+		CreateTime: utils.TimeFormat(group.CreateTime),
+		JoinMethod: group.JoinMethod,
+		Question: group.Question,
+		Answer: group.Answer,
+	}
+}
+
 func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
-	groupCode := utils.GetUUID()
+	groupCode := utils.GenderCode()
 	return &models.Group{
 		GroupName:     createGroup.GroupName,
 		GroupDescribe: createGroup.GroupDescribe,
@@ -235,4 +267,17 @@ type GetMemberRequest struct {
 type ListMyGroupResponse struct {
 	CreateGroups []models.GroupUser `json:"createGroups"`
 	JoinGroups   []models.GroupUser `json:"joinGroups"`
+}
+
+type GetGroupInfoResponse struct {
+	ID            int       `json:"id"`
+	GroupName     string    `json:"groupName"`
+	GroupDescribe string    `json:"groupDescribe"`
+	GroupMaster   string    `json:"groupMaster"`
+	GroupCode     string    `json:"groupCode"`
+	CreateUser    string    `json:"createUser"`
+	CreateTime    string 	`json:"createTime"`
+	JoinMethod    string    `json:"joinMethod"`
+	Question      string    `json:"question"`
+	Answer        string    `json:"answer"`
 }
