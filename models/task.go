@@ -75,3 +75,11 @@ func (t *Task) CountTask(openId string, status int)(int,error) {
 	}
 	return count,nil
 }
+func (t *Task) TaskList() (*[]Task, error) {
+	var tasks []Task
+	err := db.Mysql.Table(t.TableName()).Where("is_delete = ?", false).Find(&tasks).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	return &tasks, nil
+}

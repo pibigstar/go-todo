@@ -59,3 +59,11 @@ func (t *Group) GetUserCreateGroups(openID string) (*[]Group, error) {
 	}
 	return &groups, nil
 }
+func (t *Group) ListGroup() (*[]Group,error) {
+	var groups []Group
+	err := db.Mysql.Table(t.TableName()).Where("is_delete = ?",false).Find(&groups).Error
+	if err != nil {
+		return nil, err
+	}
+	return &groups, nil
+}

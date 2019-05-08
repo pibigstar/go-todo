@@ -4,6 +4,7 @@ import (
 	"github.com/gogf/gf/g"
 	"github.com/pibigstar/go-todo/config"
 	_ "github.com/pibigstar/go-todo/controller"
+	_ "github.com/pibigstar/go-todo/controller/admin"
 	"github.com/pibigstar/go-todo/utils/logger"
 )
 
