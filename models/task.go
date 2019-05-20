@@ -24,6 +24,7 @@ type Task struct {
 	IsRemind       bool      `gorm:"column:is_remind"`
 	CompletionTime time.Time `gorm:"column:completion_time"`
 	CreateTime     time.Time `gorm:"column:create_time"`
+	FileIds        string    `gorm:"column:fileIds"`
 }
 
 func (*Task) TableName() string {
@@ -67,13 +68,13 @@ func (task *Task) SetRead(id int) error {
 	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).UpdateColumn("is_read", "1").Error
 	return err
 }
-func (t *Task) CountTask(openId string, status int)(int,error) {
+func (t *Task) CountTask(openId string, status int) (int, error) {
 	var count int
 	err := db.Mysql.Table(t.TableName()).Where("appoint_to = ? and status = ?", openId, status).Count(&count).Error
 	if err != nil {
-		return 0,err
+		return 0, err
 	}
-	return count,nil
+	return count, nil
 }
 func (t *Task) TaskList() (*[]Task, error) {
 	var tasks []Task

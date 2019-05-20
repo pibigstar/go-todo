@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/pibigstar/go-todo/constant"
@@ -41,6 +42,7 @@ type CreateTaskRequest struct {
 	IsRemind       bool      `json:"isRemind"`
 	IsAll          bool      `json:"isAll"`
 	RemindAfterFin bool      `json:"remindAfterFin"`
+	FileIds        []string  `json:"fileIds"`
 }
 
 type ListTaskRequest struct {
@@ -72,12 +74,13 @@ type GetTaskRequest struct {
 }
 
 type GetTaskResponse struct {
-	Title          string `json:"title"`
-	Content        string `json:"content"`
-	GroupName      string `json:"groupName"`
-	UserName       string `json:"userName"`
-	CreateTime     string `json:"createTime"`
-	CompletionTime string `json:"completionTime"`
+	Title          string   `json:"title"`
+	Content        string   `json:"content"`
+	GroupName      string   `json:"groupName"`
+	UserName       string   `json:"userName"`
+	CreateTime     string   `json:"createTime"`
+	CompletionTime string   `json:"completionTime"`
+	FileIds        []string `json:"fileIds"`
 }
 
 type GetTaskDataResponse struct {
@@ -182,20 +185,28 @@ func getTaskData(r *ghttp.Request) {
 	doing, err := models.MTask.CountTask(openId, constant.DOING)
 	done, err := models.MTask.CountTask(openId, constant.DONE)
 	response := &GetTaskDataResponse{
-		Todo: todo,
+		Todo:  todo,
 		Doing: doing,
-		Done: done,
+		Done:  done,
 	}
-	r.Response.WriteJson(utils.SuccessWithData("OK",response))
+	r.Response.WriteJson(utils.SuccessWithData("OK", response))
 }
 
 func convertTaskToResponse(task *models.Task) *GetTaskResponse {
+	var fileIds []string
+	if task.FileIds != "" {
+		err := json.Unmarshal([]byte(task.FileIds), &fileIds)
+		if err != nil {
+			log.Error("Failed to unmarshal file ids", "err", err.Error())
+		}
+	}
 	return &GetTaskResponse{
 		Title:          task.TaskTitle,
 		Content:        task.TaskContent,
 		GroupName:      task.GroupName,
 		CompletionTime: utils.TimeFormat(task.CompletionTime),
 		CreateTime:     utils.TimeFormat(task.CreateTime),
+		FileIds:        fileIds,
 	}
 }
 
@@ -242,6 +253,15 @@ func sendTemplateMsg(task *models.Task, isAll bool) {
 }
 
 func convertCreateTaskRequestToModel(request *CreateTaskRequest) *models.Task {
+	var fileIds string
+	if len(request.FileIds) > 0 {
+		bytes, err := json.Marshal(request.FileIds)
+		if err != nil {
+			log.Error("Failed to marshal file ids", "err", err.Error())
+		} else {
+			fileIds = string(bytes)
+		}
+	}
 	return &models.Task{
 		TaskTitle:      request.TaskTitle,
 		TaskContent:    request.TaskContent,
@@ -254,6 +274,7 @@ func convertCreateTaskRequestToModel(request *CreateTaskRequest) *models.Task {
 		IsDelete:       false,
 		IsRead:         false,
 		CreateTime:     time.Now(),
+		FileIds:        fileIds,
 	}
 }
 
