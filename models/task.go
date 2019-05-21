@@ -13,6 +13,7 @@ type Task struct {
 	ID             int       `gorm:"column:id;primary_key"`
 	TaskTitle      string    `gorm:"column:task_title"`
 	TaskContent    string    `gorm:"column:task_content"`
+	TaskHtml       string    `gorm:"column:task_html"`
 	AppointTo      string    `gorm:"column:appoint_to"`
 	CreateUser     string    `gorm:"column:create_user"`
 	GroupName      string    `gorm:"column:group_name"`

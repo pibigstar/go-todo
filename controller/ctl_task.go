@@ -34,6 +34,7 @@ type AppointTo struct {
 type CreateTaskRequest struct {
 	TaskTitle      string    `json:"taskTitle"`
 	TaskContent    string    `json:"taskContent"`
+	TaskHtml       string    `json:"TaskHtml"`
 	Assign         string    `json:"assign"`
 	CompletionTime time.Time `json:"completionTime"`
 	GroupID        int       `json:"groupId"`
@@ -76,6 +77,7 @@ type GetTaskRequest struct {
 type GetTaskResponse struct {
 	Title          string   `json:"title"`
 	Content        string   `json:"content"`
+	Html           string   `json:"html"`
 	GroupName      string   `json:"groupName"`
 	UserName       string   `json:"userName"`
 	CreateTime     string   `json:"createTime"`
@@ -204,6 +206,7 @@ func convertTaskToResponse(task *models.Task) *GetTaskResponse {
 		Title:          task.TaskTitle,
 		Content:        task.TaskContent,
 		GroupName:      task.GroupName,
+		Html:           task.TaskHtml,
 		CompletionTime: utils.TimeFormat(task.CompletionTime),
 		CreateTime:     utils.TimeFormat(task.CreateTime),
 		FileIds:        fileIds,
@@ -265,6 +268,7 @@ func convertCreateTaskRequestToModel(request *CreateTaskRequest) *models.Task {
 	return &models.Task{
 		TaskTitle:      request.TaskTitle,
 		TaskContent:    request.TaskContent,
+		TaskHtml:       request.TaskHtml,
 		AppointTo:      request.Assign,
 		CompletionTime: request.CompletionTime,
 		IsRemind:       request.IsRemind,
