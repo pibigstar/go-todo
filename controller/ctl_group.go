@@ -210,6 +210,7 @@ func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
 func convertJoinGroupToModel(request *JoinGroupRequest) *models.GroupUser {
 	return &models.GroupUser{
 		GroupID:    request.GroupID,
+		GroupName: 	request.GroupName,
 		CreateTime: time.Now(),
 		IsDelete:   false,
 	}
@@ -240,6 +241,7 @@ type CreateGroupRequest struct {
 type JoinGroupRequest struct {
 	GroupID    int    `json:"groupId"`
 	GroupCode  string `json:"groupCode"`
+	GroupName  string `json:"groupName"`
 	JoinMethod string `json:"joinMethod"`
 	Question   string `json:"question"`
 	Answer     string `json:"answer"`
