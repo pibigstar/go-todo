@@ -38,6 +38,7 @@ func createConnection(conf map[string]interface{}) {
 			dbCfgMap := cast.ToStringMap(cfg)
 			if err := db.Init(dbCfgMap); err != nil {
 				log.Error("链接数据库错误", "db", db.Name(), "err", err.Error())
+				panic(err)
 			} else {
 				log.Info("链接据库成功", "db", db.Name())
 			}
