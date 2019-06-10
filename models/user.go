@@ -28,8 +28,8 @@ func (User) TableName() string {
 	return "users"
 }
 
-func (user *User) Create() error {
-	return db.Mysql.Insert(&user)
+func (t *User) Create(user *User) error {
+	return db.Mysql.Insert(user)
 }
 
 func (t *User) GetUserByOpenID(openID string) (*User, error) {

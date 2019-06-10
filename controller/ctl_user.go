@@ -3,8 +3,10 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/models"
@@ -26,7 +28,10 @@ func init() {
 
 // WxLoginRequest 微信登录request
 type WxLoginRequest struct {
-	Code string `json:"code" gvalid:"type@required#code码不能为空"`
+	Code      string `json:"code" gvalid:"type@required#code码不能为空"`
+	NickName  string `json:"nickName"`
+	AvatarUrl string `json:"avatarUrl"`
+	Gender    int    `json:"gender"`
 }
 
 // WxLoginResponse 微信登录response
@@ -79,6 +84,23 @@ func wxLogin(r *ghttp.Request) {
 	token, err := utils.GenOpenIDToken(wxLoginResp.Openid)
 	if err != nil {
 		log.Error("生成token失败", "err", err.Error())
+	}
+	//判断用户是否是新用户
+	_, err = models.MUser.GetUserByOpenID(wxLoginResp.Openid)
+	if err != nil && gorm.IsRecordNotFoundError(err) {
+		//将此用户插入到数据库中
+		newUser := &models.User{
+			OpenID:     wxLoginResp.Openid,
+			NickName:   wxLoginRequest.NickName,
+			AvatarURL:  wxLoginRequest.AvatarUrl,
+			Gender:     wxLoginRequest.Gender,
+			UpdateTime: time.Now(),
+			CreateTime: time.Now(),
+		}
+		err = models.MUser.Create(newUser)
+		if err != nil {
+			log.Error("insert user failed","err",err.Error())
+		}
 	}
 	wxLoginResp.Token = token
 	r.Response.WriteJson(wxLoginResp)
