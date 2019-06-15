@@ -40,3 +40,10 @@ func (t *Admin) ListAdmin() ([]Admin, error) {
 	}
 	return admins, nil
 }
+func (t *Admin) AdminDelete(id int) error {
+	user := User{
+		ID: id,
+	}
+	err := db.Mysql.Table(t.TableName()).Delete(&user).Error
+	return err
+}

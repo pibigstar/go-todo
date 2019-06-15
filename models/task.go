@@ -85,3 +85,10 @@ func (t *Task) TaskList() (*[]Task, error) {
 	}
 	return &tasks, nil
 }
+func (t *Task) TaskDelete(id int) error {
+	task := Task{
+		ID: id,
+	}
+	err := db.Mysql.Table(t.TableName()).Delete(&task).Error
+	return err
+}

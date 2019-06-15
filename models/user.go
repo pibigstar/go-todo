@@ -52,3 +52,10 @@ func (t *User) PhoneLogin(phone string, password string) (*User,error){
 	}
 	return &user,nil
 }
+func (t *User) UserDelete(id int) error{
+	user := User{
+		ID: id,
+	}
+	err := db.Mysql.Table(t.TableName()).Delete(&user).Error
+	return err
+}

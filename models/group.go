@@ -67,3 +67,10 @@ func (t *Group) ListGroup() (*[]Group,error) {
 	}
 	return &groups, nil
 }
+func (t *Group) GroupDelete(id int) error {
+	group := Group{
+		ID: id,
+	}
+	err := db.Mysql.Table(t.TableName()).Delete(&group).Error
+	return err
+}
