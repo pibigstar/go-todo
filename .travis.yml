@@ -14,6 +14,9 @@ code_lint:
   - pushes
 
 
+before_install:
+- pwd
+
 # 安装脚本
 # install: ./script/build install
 install: true
