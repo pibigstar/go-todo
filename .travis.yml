@@ -5,7 +5,6 @@ language: go
 before_install:
 - pwd
 - /bin/bash scritps/vet.sh
-- echo "${GOPATH}/src/github.com/pibigstar/go-todo"
 # 安装脚本
 # install: ./script/build install
 install: true
