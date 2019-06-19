@@ -1,8 +1,18 @@
 # 执行语言 go
 language: go
 
-
+stages:
+- check
 # true表示不执行任何脚本，状态直接设为成功。
+
+# 代码格式化检查
+code_lint:
+  stage: check
+  script:
+  - /bin/bash scripts/check.sh
+  only:
+  - pushes
+
 
 # 安装脚本
 # install: ./script/build install
