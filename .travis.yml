@@ -1,6 +1,10 @@
 # 执行语言 go
 language: go
 
+# 代码风格检查
+before_install:
+- pwd
+- /bin/bash scripts/vet.sh
 
 # true表示不执行任何脚本，状态直接设为成功。
 

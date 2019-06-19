@@ -106,7 +106,7 @@ func (t *GroupUser) ListMyCreateGroup(openId string) ([]GroupUser, error) {
 func (t *GroupUser) ListMyJoinGroup(openId string) ([]GroupUser, error) {
 	var groups []GroupUser
 	err := db.Mysql.Table(t.TableName()).
-		Where("user_id = ? and is_create = ? and is_delete = ?", openId, false,false).
+		Where("user_id = ? and is_create = ? and is_delete = ?", openId, false, false).
 		Find(&groups).Error
 	if err != nil {
 		return nil, err

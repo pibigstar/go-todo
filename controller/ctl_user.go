@@ -99,7 +99,7 @@ func wxLogin(r *ghttp.Request) {
 		}
 		err = models.MUser.Create(newUser)
 		if err != nil {
-			log.Error("insert user failed","err",err.Error())
+			log.Error("insert user failed", "err", err.Error())
 		}
 	}
 	wxLoginResp.Token = token

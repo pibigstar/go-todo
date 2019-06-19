@@ -13,6 +13,6 @@ func init() {
 	s.BindHookHandler("/api/*", ghttp.HOOK_BEFORE_SERVE, func(r *ghttp.Request) {
 		// 跨域访问设置
 		r.Response.CORSDefault()
-		r.Response.Header().Set("Access-Control-Allow-Origin","*")
+		r.Response.Header().Set("Access-Control-Allow-Origin", "*")
 	})
 }
