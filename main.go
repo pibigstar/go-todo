@@ -25,5 +25,5 @@ func main() {
 	s.SetHTTPSPort(443)
 	// 开启性能分析，可访问页面/debug/pprof
 	s.EnablePprof()
-	  s.Run()
+	s.Run()
 }
