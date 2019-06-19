@@ -4,8 +4,8 @@ language: go
 # true表示不执行任何脚本，状态直接设为成功。
 before_install:
 - pwd
-- /bin/bash /home/travis/gopath/src/github.com/pibigstar/go-todo/scripts/check.sh
-
+- /bin/bash scritps/vet.sh
+- echo "${GOPATH}/src/github.com/pibigstar/go-todo"
 # 安装脚本
 # install: ./script/build install
 install: true
