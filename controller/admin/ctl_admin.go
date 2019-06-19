@@ -64,4 +64,3 @@ func adminDelete(r *ghttp.Request) {
 	}
 	utils.SuccessResponse("OK")
 }
-

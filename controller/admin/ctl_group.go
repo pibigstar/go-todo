@@ -33,5 +33,3 @@ func groupDelete(r *ghttp.Request) {
 	}
 	utils.SuccessResponse("OK")
 }
-
-

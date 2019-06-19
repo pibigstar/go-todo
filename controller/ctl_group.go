@@ -171,7 +171,7 @@ func getGroupInfo(r *ghttp.Request) {
 	}
 	user, err := models.MUser.GetUserByOpenID(group.CreateUser)
 	if err != nil {
-		log.Error("get user info is failed","err",err.Error())
+		log.Error("get user info is failed", "err", err.Error())
 	}
 	groupResponse := convertGroupInfoToResponse(group)
 	groupResponse.CreateUser = user.NickName
@@ -180,15 +180,15 @@ func getGroupInfo(r *ghttp.Request) {
 
 func convertGroupInfoToResponse(group *models.Group) *GetGroupInfoResponse {
 	return &GetGroupInfoResponse{
-		ID: group.ID,
-		GroupName: group.GroupName,
+		ID:            group.ID,
+		GroupName:     group.GroupName,
 		GroupDescribe: group.GroupDescribe,
-		GroupCode: group.GroupCode,
-		GroupMaster: group.GroupMaster,
-		CreateTime: utils.TimeFormat(group.CreateTime),
-		JoinMethod: group.JoinMethod,
-		Question: group.Question,
-		Answer: group.Answer,
+		GroupCode:     group.GroupCode,
+		GroupMaster:   group.GroupMaster,
+		CreateTime:    utils.TimeFormat(group.CreateTime),
+		JoinMethod:    group.JoinMethod,
+		Question:      group.Question,
+		Answer:        group.Answer,
 	}
 }
 
@@ -210,7 +210,7 @@ func convertCreateGroupToModel(createGroup *CreateGroupRequest) *models.Group {
 func convertJoinGroupToModel(request *JoinGroupRequest) *models.GroupUser {
 	return &models.GroupUser{
 		GroupID:    request.GroupID,
-		GroupName: 	request.GroupName,
+		GroupName:  request.GroupName,
 		CreateTime: time.Now(),
 		IsDelete:   false,
 	}
@@ -272,14 +272,14 @@ type ListMyGroupResponse struct {
 }
 
 type GetGroupInfoResponse struct {
-	ID            int       `json:"id"`
-	GroupName     string    `json:"groupName"`
-	GroupDescribe string    `json:"groupDescribe"`
-	GroupMaster   string    `json:"groupMaster"`
-	GroupCode     string    `json:"groupCode"`
-	CreateUser    string    `json:"createUser"`
-	CreateTime    string 	`json:"createTime"`
-	JoinMethod    string    `json:"joinMethod"`
-	Question      string    `json:"question"`
-	Answer        string    `json:"answer"`
+	ID            int    `json:"id"`
+	GroupName     string `json:"groupName"`
+	GroupDescribe string `json:"groupDescribe"`
+	GroupMaster   string `json:"groupMaster"`
+	GroupCode     string `json:"groupCode"`
+	CreateUser    string `json:"createUser"`
+	CreateTime    string `json:"createTime"`
+	JoinMethod    string `json:"joinMethod"`
+	Question      string `json:"question"`
+	Answer        string `json:"answer"`
 }

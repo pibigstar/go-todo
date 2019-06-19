@@ -44,15 +44,15 @@ func (t *User) UpdateUserInfo(user *User) error {
 	err := db.Mysql.Table(t.TableName()).Where("openId = ?", user.OpenID).Updates(user).Error
 	return err
 }
-func (t *User) PhoneLogin(phone string, password string) (*User,error){
+func (t *User) PhoneLogin(phone string, password string) (*User, error) {
 	var user User
 	err := db.Mysql.Table(t.TableName()).Where("phone = ? and password = ?", phone, password).First(&user).Error
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return &user,nil
+	return &user, nil
 }
-func (t *User) UserDelete(id int) error{
+func (t *User) UserDelete(id int) error {
 	user := User{
 		ID: id,
 	}
