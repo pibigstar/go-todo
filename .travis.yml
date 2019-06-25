@@ -4,7 +4,7 @@ language: go
 
 # 代码风格检查
 before_script:
-- find . -name "*.go" -not -path "./vendor/*" | xargs gofmt -w
+- find . -name "*.go" | xargs gofmt -w
 - git diff --exit-code
 
 # true表示不执行任何脚本，状态直接设为成功。
