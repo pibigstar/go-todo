@@ -1,10 +1,14 @@
 # 执行语言 go
 language: go
 
+
+# 代码风格检查
+before_script:
+- find . -name "*.go" -not -path "./vendor/*" | xargs gofmt -w
+- git diff --exit-code
+
 # true表示不执行任何脚本，状态直接设为成功。
-before_install:
-- pwd
-- /bin/bash scritps/vet.sh
+
 # 安装脚本
 # install: ./script/build install
 install: true
