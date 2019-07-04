@@ -30,7 +30,7 @@ func CollectFormID(openID string, formID string) error {
 		Expire: time.Now().Add(constant.User_Form_ID_Expire),
 	}
 
-	formIds = append(formIds, newFormID)
+	    formIds = append(formIds, newFormID)
 	bytes, err := json.Marshal(formIds)
 	if err != nil {
 		log.Error("解析formIds失败", "err", err.Error())
