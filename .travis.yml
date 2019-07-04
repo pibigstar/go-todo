@@ -5,7 +5,7 @@ language: go
 # 代码风格检查
 before_script:
 - find . -name "*.go" -not -path "./vendor/*" | xargs gofmt -w
-- git diff --exit-code
+- git diff --name-only --exit-code || echo -e "\033[33mPlease format your code that the above files\033[0m"
 
 # true表示不执行任何脚本，状态直接设为成功。
 
