@@ -84,7 +84,7 @@ func buildFlags() {
 	testing.Init()
 	flag.StringVar(&ServerStartupFlags.Host, "host", "127.0.0.1", "listening host")
 	flag.IntVar(&ServerStartupFlags.Port, "port", 7410, "listening port")
-	flag.StringVar(&ServerStartupFlags.Environment, "env", "prod", "run time environment")
+	flag.StringVar(&ServerStartupFlags.Environment, "env", "dev", "run time environment")
 	if !flag.Parsed() {
 		flag.Parse()
 	}

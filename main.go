@@ -6,10 +6,7 @@ import (
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/pibigstar/go-todo/config"
-	"github.com/pibigstar/go-todo/utils/logger"
 )
-
-var log = logger.New("main")
 
 func main() {
 	s := g.Server()
@@ -22,8 +19,8 @@ func main() {
 	s.SetAccessLogEnabled(true)
 	s.SetErrorLogEnabled(true)
 	// 开启https
-	//s.EnableHTTPS("https/ssl.pem", "https/ssl.key")
-	//s.SetHTTPSPort(443)
+	s.EnableHTTPS("https/ssl.pem", "https/ssl.key")
+	s.SetHTTPSPort(443)
 	// 开启性能分析，可访问页面/debug/pprof
 	s.EnablePprof()
 	s.Run()

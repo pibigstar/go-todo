@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -15,14 +14,6 @@ import (
 const (
 	ContextMDTokenKey = "token"
 )
-
-func main() {
-
-	tokenContext := mockTokenContext(ContextMDTokenKey)
-
-	token := GetTokenFromContext(tokenContext)
-	fmt.Println("get token from context:", token)
-}
 
 // 将token放到上下文中
 func mockTokenContext(tokenKey string) context.Context {
