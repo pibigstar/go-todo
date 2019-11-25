@@ -1,26 +1,23 @@
 package test
 
 import (
-	"context"
+	"github.com/gogf/gf/os/glog"
+	"github.com/gogf/gf/test/gtest"
 	"testing"
 
 	"github.com/pibigstar/go-todo/models"
 )
 
 func TestCreateUser(t *testing.T) {
-	ctx := context.Background()
-
 	user := &models.User{
 		OpenID:   "pibigstar",
 		NickName: "派大星",
 	}
-	user.Create(user)
+	err := user.Create(user)
+	gtest.Assert(err, nil)
 
 	getUser, err := models.MUser.GetUserByOpenID("pibigstar")
-	if err != nil {
-		log.CtxError(ctx, "获取用户信息失败", "err", err.Error())
-	}
-
-	log.CtxInfo(ctx, "获取用户信息成功", "user", getUser)
+	gtest.Assert(err, nil)
+	glog.Print(getUser)
 
 }

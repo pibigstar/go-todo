@@ -7,6 +7,6 @@ import (
 
 func TestGenderCode(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		utils.GenderCode()
+		t.Log(utils.GenderCode())
 	}
 }
