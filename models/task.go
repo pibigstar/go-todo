@@ -13,7 +13,7 @@ type Task struct {
 	ID             int       `gorm:"column:id;primary_key"`
 	TaskTitle      string    `gorm:"column:task_title"`
 	TaskContent    string    `gorm:"column:task_content"`
-	TaskHtml       string    `gorm:"column:task_html"`
+	TaskHTML       string    `gorm:"column:task_html"`
 	AppointTo      string    `gorm:"column:appoint_to"`
 	CreateUser     string    `gorm:"column:create_user"`
 	GroupName      string    `gorm:"column:group_name"`
@@ -39,9 +39,9 @@ func (*Task) Create(task *Task) error {
 	}
 	return nil
 }
-func (task *Task) ListTask(openId string, status int, title string) ([]Task, error) {
+func (t *Task) ListTask(openId string, status int, title string) ([]Task, error) {
 	var tasks []Task
-	model := db.Mysql.Table(task.TableName()).Where("appoint_to = ? and status = ?", openId, status)
+	model := db.Mysql.Table(t.TableName()).Where("appoint_to = ? and status = ?", openId, status)
 	if title != "" {
 		title = "%" + title + "%"
 		model = model.Where("task_title like ?", title)
@@ -52,21 +52,21 @@ func (task *Task) ListTask(openId string, status int, title string) ([]Task, err
 	}
 	return tasks, nil
 }
-func (task *Task) ChangeStatus(id int, status int) error {
-	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).UpdateColumn("status", status).Error
+func (t *Task) ChangeStatus(id int, status int) error {
+	err := db.Mysql.Table(t.TableName()).Where("id = ?", id).UpdateColumn("status", status).Error
 	return err
 }
-func (task *Task) GetTask(id int) (*Task, error) {
+func (t *Task) GetTask(id int) (*Task, error) {
 	var taskModel Task
-	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).Find(&taskModel).Error
+	err := db.Mysql.Table(t.TableName()).Where("id = ?", id).Find(&taskModel).Error
 	if err != nil {
 		return nil, err
 	}
 	return &taskModel, nil
 }
 
-func (task *Task) SetRead(id int) error {
-	err := db.Mysql.Table(task.TableName()).Where("id = ?", id).UpdateColumn("is_read", "1").Error
+func (t *Task) SetRead(id int) error {
+	err := db.Mysql.Table(t.TableName()).Where("id = ?", id).UpdateColumn("is_read", "1").Error
 	return err
 }
 func (t *Task) CountTask(openId string, status int) (int, error) {

@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/gogf/gf/g/util/gconv"
+	"github.com/gogf/gf/util/gconv"
 	"github.com/jinzhu/gorm"
 	"time"
 

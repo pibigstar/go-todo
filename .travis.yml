@@ -1,28 +1,35 @@
-# 执行语言 go
 language: go
 
-# 代码风格检查
-before_install:
-- pwd
-- /bin/bash scripts/vet.sh
+go:
+  - "1.13.x"
 
-# true表示不执行任何脚本，状态直接设为成功。
+branches:
+  only:
+    - master
+    - develop
 
-# 安装脚本
-# install: ./script/build install
-install: true
+# https://docs.travis-ci.com/user/database-setup/
+services:
+  - mysql
+  - redis-server
 
+env:
+  - GO111MODULE=on
 
-# 执行脚本
-#script:
-#  - go_test.go
-#  - main_test.go
-script: true
+install:
+  - cd /usr/bin
+  - go get -u github.com/mgechev/revive
+  - cd -
 
-#  before_install：install 阶段之前执行
-#  before_script：script 阶段之前执行
-#  after_failure：script 阶段失败时执行
-#  after_success：script 阶段成功时执行
-#  before_deploy：deploy 步骤之前执行
-#  after_deploy：deploy 步骤之后执行
-#  after_script：script 阶段之后执行
+before_script:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+  - find . -name "*.go" | xargs gofmt -w
+  - git diff --exit-code
+  - revive -config=scripts/revive.toml -formatter friendly ./...
+
+script:
+  - go test ./... || exit 0
+  - go test ./... -coverprofile=coverage.txt -covermode=atomic || exit 0
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

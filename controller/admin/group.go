@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/net/ghttp"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 	"github.com/pibigstar/go-todo/models"
 	"github.com/pibigstar/go-todo/utils"
 )
@@ -22,8 +22,8 @@ func groupList(r *ghttp.Request) {
 }
 
 func groupDelete(r *ghttp.Request) {
-	request := new(IDRequest)
-	r.GetJson().ToStruct(request)
+	request := &IDRequest{}
+	r.GetToStruct(request)
 	if request.ID == 0 {
 		return
 	}

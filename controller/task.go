@@ -6,8 +6,8 @@ import (
 
 	"github.com/pibigstar/go-todo/constant"
 
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/net/ghttp"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/models"
 	"github.com/pibigstar/go-todo/utils"
@@ -34,7 +34,7 @@ type AppointTo struct {
 type CreateTaskRequest struct {
 	TaskTitle      string    `json:"taskTitle"`
 	TaskContent    string    `json:"taskContent"`
-	TaskHtml       string    `json:"TaskHtml"`
+	TaskHTML       string    `json:"TaskHTML"`
 	Assign         string    `json:"assign"`
 	CompletionTime time.Time `json:"completionTime"`
 	GroupID        int       `json:"groupId"`
@@ -77,7 +77,7 @@ type GetTaskRequest struct {
 type GetTaskResponse struct {
 	Title          string   `json:"title"`
 	Content        string   `json:"content"`
-	Html           string   `json:"html"`
+	HTML           string   `json:"html"`
 	GroupName      string   `json:"groupName"`
 	UserName       string   `json:"userName"`
 	CreateTime     string   `json:"createTime"`
@@ -92,8 +92,9 @@ type GetTaskDataResponse struct {
 }
 
 func createTask(r *ghttp.Request) {
-	createTaskRequest := new(CreateTaskRequest)
-	r.GetJson().ToStruct(createTaskRequest)
+	createTaskRequest := &CreateTaskRequest{}
+	r.GetToStruct(createTaskRequest)
+
 	mCreateTask := convertCreateTaskRequestToModel(createTaskRequest)
 	openID, _ := middleware.GetOpenID(r)
 	mCreateTask.CreateUser = openID
@@ -206,7 +207,7 @@ func convertTaskToResponse(task *models.Task) *GetTaskResponse {
 		Title:          task.TaskTitle,
 		Content:        task.TaskContent,
 		GroupName:      task.GroupName,
-		Html:           task.TaskHtml,
+		HTML:           task.TaskHTML,
 		CompletionTime: utils.TimeFormat(task.CompletionTime),
 		CreateTime:     utils.TimeFormat(task.CreateTime),
 		FileIds:        fileIds,
@@ -228,7 +229,7 @@ func sendTemplateMsg(task *models.Task, isAll bool) {
 	tempData.Keyword5.Value = task.Tips
 	templateMsg.Data = tempData
 	templateMsg.Touser = user.OpenID
-	templateMsg.TemplateID = constant.Tmeplate_Receive_Task_ID
+	templateMsg.TemplateID = constant.TemplateReceiveTaskId
 	// 获取formID
 	// 所有人
 	if isAll {
@@ -268,7 +269,7 @@ func convertCreateTaskRequestToModel(request *CreateTaskRequest) *models.Task {
 	return &models.Task{
 		TaskTitle:      request.TaskTitle,
 		TaskContent:    request.TaskContent,
-		TaskHtml:       request.TaskHtml,
+		TaskHTML:       request.TaskHTML,
 		AppointTo:      request.Assign,
 		CompletionTime: request.CompletionTime,
 		IsRemind:       request.IsRemind,

@@ -3,17 +3,17 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"io/ioutil"
 	"net/http"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/models"
 
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/net/ghttp"
-	"github.com/gogf/gf/g/util/gvalid"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/util/gvalid"
 	"github.com/pibigstar/go-todo/config"
 	"github.com/pibigstar/go-todo/utils"
 )
@@ -30,7 +30,7 @@ func init() {
 type WxLoginRequest struct {
 	Code      string `json:"code" gvalid:"type@required#code码不能为空"`
 	NickName  string `json:"nickName"`
-	AvatarUrl string `json:"avatarUrl"`
+	AvatarURL string `json:"avatarUrl"`
 	Gender    int    `json:"gender"`
 }
 
@@ -61,8 +61,8 @@ type UpdateUserInfoRequest struct {
 // WxLogin 微信登录
 func wxLogin(r *ghttp.Request) {
 
-	wxLoginRequest := new(WxLoginRequest)
-	r.GetJson().ToStruct(wxLoginRequest)
+	wxLoginRequest := &WxLoginRequest{}
+	r.GetToStruct(wxLoginRequest)
 
 	if err := gvalid.CheckStruct(wxLoginRequest, nil); err != nil {
 		log.Error("code为空", "err", err.String())
@@ -92,7 +92,7 @@ func wxLogin(r *ghttp.Request) {
 		newUser := &models.User{
 			OpenID:     wxLoginResp.Openid,
 			NickName:   wxLoginRequest.NickName,
-			AvatarURL:  wxLoginRequest.AvatarUrl,
+			AvatarURL:  wxLoginRequest.AvatarURL,
 			Gender:     wxLoginRequest.Gender,
 			UpdateTime: time.Now(),
 			CreateTime: time.Now(),

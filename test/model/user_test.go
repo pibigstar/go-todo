@@ -14,7 +14,7 @@ func TestCreateUser(t *testing.T) {
 		OpenID:   "pibigstar",
 		NickName: "派大星",
 	}
-	user.Create()
+	user.Create(user)
 
 	getUser, err := models.MUser.GetUserByOpenID("pibigstar")
 	if err != nil {

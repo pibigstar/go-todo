@@ -3,8 +3,8 @@ package controller
 import (
 	"time"
 
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/net/ghttp"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/models"
 	"github.com/pibigstar/go-todo/utils"
@@ -23,8 +23,9 @@ func init() {
 
 // createGroup 创建组织
 func createGroup(r *ghttp.Request) {
-	createGroupRequest := new(CreateGroupRequest)
-	r.GetJson().ToStruct(createGroupRequest)
+	createGroupRequest := &CreateGroupRequest{}
+	r.GetToStruct(createGroup)
+
 	mCreateGroup := convertCreateGroupToModel(createGroupRequest)
 	openID, err := middleware.GetOpenID(r)
 	mCreateGroup.GroupMaster = openID
@@ -33,6 +34,7 @@ func createGroup(r *ghttp.Request) {
 	if err != nil {
 		r.Response.WriteJson(utils.ErrorResponse(err.Error()))
 	}
+
 	// get user info
 	user, err := models.MUser.GetUserByOpenID(openID)
 	if err != nil {
@@ -85,8 +87,8 @@ func searchGroup(r *ghttp.Request) {
 
 // joinGroup 加入组织
 func joinGroup(r *ghttp.Request) {
-	joinGroupRequest := new(JoinGroupRequest)
-	r.GetJson().ToStruct(joinGroupRequest)
+	joinGroupRequest := &JoinGroupRequest{}
+	r.GetToStruct(joinGroupRequest)
 	group, err := models.MGroup.GetGroupByID(joinGroupRequest.GroupID)
 	if err != nil {
 		log.Error("没有此组织", "groupID", joinGroupRequest.GroupID)

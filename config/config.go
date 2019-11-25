@@ -3,11 +3,10 @@ package config
 import (
 	"flag"
 	"fmt"
-
-	"github.com/spf13/cast"
-
 	"github.com/pibigstar/go-todo/utils/logger"
+	"github.com/spf13/cast"
 	"github.com/spf13/viper"
+	"testing"
 )
 
 var log = logger.New("config")
@@ -82,6 +81,7 @@ func buildServerConfig() {
 
 // buildFlags 构建启动时参数配置
 func buildFlags() {
+	testing.Init()
 	flag.StringVar(&ServerStartupFlags.Host, "host", "127.0.0.1", "listening host")
 	flag.IntVar(&ServerStartupFlags.Port, "port", 7410, "listening port")
 	flag.StringVar(&ServerStartupFlags.Environment, "env", "prod", "run time environment")

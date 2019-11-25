@@ -3,8 +3,8 @@ package controller
 import (
 	"fmt"
 
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/net/ghttp"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 	"github.com/pibigstar/go-todo/constant"
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/utils"
@@ -30,7 +30,7 @@ func sendTemplate(r *ghttp.Request) {
 	templateMsg.FormID = formID
 	openID, _ := middleware.GetOpenID(r)
 	templateMsg.Touser = openID
-	templateMsg.TemplateID = constant.Tmeplate_Receive_Task_ID
+	templateMsg.TemplateID = constant.TemplateReceiveTaskId
 	response, err := utils.SendTemplate(templateMsg)
 	if err != nil {
 		fmt.Println("发送模板消息失败", err.Error())

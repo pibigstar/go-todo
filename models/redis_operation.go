@@ -20,14 +20,14 @@ type formIDs []FormIDStruct
 
 // 将收集的formID放入redis中
 func CollectFormID(openID string, formID string) error {
-	formIDStr, err := db.Redis.Get(fmt.Sprintf(constant.Collection_Form_ID_Prefix, openID)).Result()
+	formIDStr, err := db.Redis.Get(fmt.Sprintf(constant.CollectionFormIdPrefix, openID)).Result()
 	var formIds []FormIDStruct
 	var data = []byte(formIDStr)
 	json.Unmarshal(data, &formIds)
 
 	newFormID := FormIDStruct{
 		FormID: formID,
-		Expire: time.Now().Add(constant.User_Form_ID_Expire),
+		Expire: time.Now().Add(constant.UserFormIdExpire),
 	}
 
 	formIds = append(formIds, newFormID)
@@ -36,7 +36,7 @@ func CollectFormID(openID string, formID string) error {
 		log.Error("解析formIds失败", "err", err.Error())
 		return err
 	}
-	_, err = db.Redis.Set(fmt.Sprintf(constant.Collection_Form_ID_Prefix, openID), string(bytes), constant.User_Form_ID_Expire).Result()
+	_, err = db.Redis.Set(fmt.Sprintf(constant.CollectionFormIdPrefix, openID), string(bytes), constant.UserFormIdExpire).Result()
 	if err != nil {
 		log.Error("存储formIds失败", "err", err.Error())
 		return err
@@ -46,7 +46,7 @@ func CollectFormID(openID string, formID string) error {
 
 // 获取收集的formID
 func GetCollectionFormID(openID string) (string, error) {
-	formIDStr, _ := db.Redis.Get(fmt.Sprintf(constant.Collection_Form_ID_Prefix, openID)).Result()
+	formIDStr, _ := db.Redis.Get(fmt.Sprintf(constant.CollectionFormIdPrefix, openID)).Result()
 	var formIds formIDs
 	var data = []byte(formIDStr)
 	json.Unmarshal(data, &formIds)
@@ -63,7 +63,7 @@ func GetCollectionFormID(openID string) (string, error) {
 	if len(newFormIds) > 0 {
 		ids, formID := newFormIds.Remove()
 		bytes, _ := json.Marshal(ids)
-		db.Redis.Set(fmt.Sprintf(constant.Collection_Form_ID_Prefix, openID), string(bytes), constant.User_Form_ID_Expire).Result()
+		db.Redis.Set(fmt.Sprintf(constant.CollectionFormIdPrefix, openID), string(bytes), constant.UserFormIdExpire).Result()
 		return formID, nil
 	}
 	return "", errors.New("无可用的formID")

@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/gogf/gf/g"
-	"github.com/gogf/gf/g/net/ghttp"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 	"github.com/pibigstar/go-todo/middleware"
 	"github.com/pibigstar/go-todo/utils/logger"
 )

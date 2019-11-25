@@ -27,15 +27,15 @@ func TestToken(t *testing.T) {
 
 	token, err := utils.GenJwtToken(claims)
 	if err != nil {
-		fmt.Printf("generate jwt token failed:%e", err)
+		t.Logf("generate jwt token failed: %e", err)
 	}
 
 	fmt.Println("token:", token)
 
 	isToken := utils.CheckJwtToken(token)
-	fmt.Println("isToken:", isToken)
+	t.Log("isToken:", isToken)
 
 	if uid, err := utils.GetOpenIDFromToken(token); err == nil {
-		fmt.Println("用户id：", uid)
+		t.Logf("用户id: %s", uid)
 	}
 }

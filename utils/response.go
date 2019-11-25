@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/gogf/gf/g/net/ghttp"
+import "github.com/gogf/gf/net/ghttp"
 
 // Response 封装请求返回体
 type Response struct {

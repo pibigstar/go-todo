@@ -16,8 +16,8 @@ import (
 // 发送模板消息
 
 var (
-	send_template_url    = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=%s"
-	get_access_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"
+	sendTemplateURL   = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=%s"
+	getAccessTokenURL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"
 )
 
 // SendTemplate 发送模板消息
@@ -28,7 +28,7 @@ func SendTemplate(msg *TemplateMsg) (*SendTemplateResponse, error) {
 		log.Error("获取accessToken失败")
 		return nil, err
 	}
-	url := fmt.Sprintf(send_template_url, accessToken.AccessToken)
+	url := fmt.Sprintf(sendTemplateURL, accessToken.AccessToken)
 	data, err := json.Marshal(msg)
 	if err != nil {
 		log.Error("模板消息JSON格式错误", "err", err.Error())
@@ -62,7 +62,7 @@ func getAccessToken(openID string) (*GetAccessTokenResponse, error) {
 	}
 	appID := config.ServerConfig.Appid
 	secret := config.ServerConfig.Secret
-	url := fmt.Sprintf(get_access_token_url, appID, secret)
+	url := fmt.Sprintf(getAccessTokenURL, appID, secret)
 	client := http.Client{}
 	resp, err := client.Get(url)
 	if err != nil {
@@ -85,14 +85,14 @@ func getAccessToken(openID string) (*GetAccessTokenResponse, error) {
 
 // 从redis中取access_token
 func getAccessTokenFromRedis(openID string) (string, error) {
-	key := fmt.Sprintf(constant.Redis_Prefix_Access_Token, openID)
+	key := fmt.Sprintf(constant.RedisPrefixAccessToken, openID)
 	accessToken, err := db.Redis.Get(key).Result()
 	return accessToken, err
 }
 
 // 将access_token存储到redis中
 func setAccessTokenToRedis(openID, token string) (string, error) {
-	key := fmt.Sprintf(constant.Redis_Prefix_Access_Token, openID)
+	key := fmt.Sprintf(constant.RedisPrefixAccessToken, openID)
 	b, err := db.Redis.Set(key, token, 7200*time.Second).Result()
 	return b, err
 }
